@@ -1,0 +1,451 @@
+{% extends 'user/layout/base.html' %}
+
+
+
+
+
+{% block style %}
+
+
+
+
+
+{% endblock %}
+
+
+{% block content %}
+<!-- <table class="table">
+  <thead>
+    <tr>
+      <th>Time</th>
+      <th>Course</th>
+      <th>Day</th>
+      <th>Contrints</th>
+      <td>Contrints start_time</td>
+      <td>Contrints end_time</td>
+    </tr>
+  </thead>
+  <tbody>
+    {% for st in timetables %}
+    <tr>
+      <td>{{st.start_time}} - {{ st.end_time}}</td>
+      <td>{{st.name}}</td>
+      <td>{{st.day}}</td>
+      <td>{{st.const_name}}</td>
+      <td>{{st.start_time_con}}</td>
+      <td>{{st.end_time_con}}</td>
+     
+    </tr>
+    {% endfor %}
+    </tbody>
+ </table> -->
+
+   
+
+
+  
+
+
+
+
+<div class="container">
+
+
+  <div class="row">
+
+    <div class="col-3"> <h4 class="text-uppercase" style="text-align:center;margin-left: 2px;;">Days</h4></div>
+    <div class="col-1"></div>
+    <div class="col-5"> <h4 class="text-uppercase" style="text-align:center;margin-left: 2px;;">Courses With times</h4></div>
+  </div>
+  <div class="timetable-img text-center">
+      <img src="img/content/timetable.png" alt="">
+  </div>
+  
+  </div>
+  <div class="table-responsive">
+      <table class="table table-bordered text-center">
+          <thead>
+              <tr class="bg-light-gray">
+                  <!-- <th class="text-uppercase">Days
+                  </th>
+                  <th class="text-uppercase">Courses With Time</th> -->
+                  <!-- <th class="text-uppercase">Monday</th>
+                  <th class="text-uppercase">Tuesday</th>
+                  <th class="text-uppercase">Wednesday</th>
+                  <th class="text-uppercase">Thursday</th>
+                  <th class="text-uppercase">Friday</th>
+                  <th class="text-uppercase">Saturday</th> -->
+              </tr>
+          </thead>
+          <tbody>
+
+
+
+            {% for day, items in grouped_dict.items %}
+                <tr>
+                  {% if day == 'MON'%}
+                  <th class="text-uppercase align-middle">Monday</th>
+                  {% endif %}
+                  {% if day == 'TUE'%}
+                  <th class="text-uppercase align-middle">Tuesday</th>
+                  {% endif %}
+                  {% if day == 'WED'%}
+                  <th class="text-uppercase align-middle">Wednesday</th>
+                  {% endif %}
+                  {% if day == 'THU'%}
+                  <th class="text-uppercase align-middle">Thursday</th>
+                  {% endif %}
+                  {% if day == 'FRI'%}
+                  <th class="text-uppercase align-middle">Friday</th>
+                  {% endif %}
+                  {% if day == 'SUN'%}
+                  <th class="text-uppercase align-middle">SUNDAY</th>
+                  {% endif %}
+
+                  {% for item in items %}
+                  <td>
+                    {% if item.name == "Machine Learning"%}
+                    <span class="bg-purple padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16  xs-font-size13">{{item.name}}</span>
+                  
+                    {% elif item.name == "Parrallel computing" %}
+                    <span class="bg-yellow padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16  xs-font-size13">{{item.name}}</span>
+                    {% elif item.name == "Advanced Algorithm" %}
+                    <span class="bg-lightred padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16  xs-font-size13">{{item.name}}</span>
+                    {%else %}
+                    <span class="bg-pink padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16  xs-font-size13">{{item.name}}</span>
+                    {%endif%}
+                    <div class="margin-10px-top font-size14">{{item.start_time}}-{{item.end_time}}</div>
+                    <div class="font-size13 text-light-gray">Kate Alley</div>
+                 </td>
+                  {% if item.const_name %}
+                  <td>
+                    <span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16  xs-font-size13">{{item.const_name}}</span>
+                    <div class="margin-10px-top font-size14">{{item.start_time_con}}-{{item.end_time_con}}</div>
+                    <div class="font-size13 text-light-gray">Kate Alley</div>
+                 </td>
+
+
+                  {% endif %}
+                 {% endfor %}
+
+
+                </tr>
+              
+               
+            {% endfor %}
+             
+                  
+     
+        
+                 
+             
+          </tbody>
+      </table>
+  </div>
+</div>
+        
+
+
+<!-- 
+{% for day, items in grouped_dict.items %}
+    <h2>{{ day }}</h2>
+    <ul>
+        {% for item in items %}
+            <li>{{ item.name }}</li>
+        {% endfor %}
+    </ul>
+{% endfor %} -->
+
+
+
+
+     
+
+{% endblock %}
+
+{% block javascript %}
+
+<script>
+
+
+var timetableData = [
+  { time: '09:00', monday: 'Event A', tuesday: 'Event B', wednesday: 'Event C', thursday: 'Event D', friday: 'Event E' },
+  { time: '10:00', monday: 'Event F', tuesday: 'Event G', wednesday: 'Event H', thursday: 'Event I', friday: 'Event J' },
+  // Add more timetable data as needed
+];
+var data=[
+    {
+        "id": 10,
+        "day": "MON",
+        "name": "Parallel computing",
+        "studentcount": 45,
+        "start_time": "09:00:00",
+        "end_time": "13:50:00",
+        "user": [],
+        "const_name": "practice",
+        "start_time_con": null,
+        "end_time_con": null,
+        "cons_day": "MON"
+    },
+    {
+        "id": 3,
+        "day": "TUE",
+        "name": "Advanced Algorithm",
+        "studentcount": 20,
+        "start_time": "11:00:00",
+        "end_time": "13:50:00",
+        "user": [],
+        "const_name": "",
+        "start_time_con": "",
+        "end_time_con": "",
+        "cons_day": ""
+    },
+    {
+        "id": 6,
+        "day": "TUE",
+        "name": "Machine Learning",
+        "studentcount": 1,
+        "start_time": "14:00:00",
+        "end_time": "18:50:00",
+        "user": [],
+        "const_name": "",
+        "start_time_con": "",
+        "end_time_con": "",
+        "cons_day": ""
+    }
+]
+
+
+// Call the function to populate the timetable with the data
+populateTimetable(data);
+
+
+
+
+function populateTimetable(timetableData) {
+  console.log("hussain")
+  var timetableBody = document.getElementById('timetable-body');
+
+  // Iterate over the timetable data and create rows
+  var row1 ,row2;
+  for (var i = 0; i < timetableData.length; i++) {
+    var timeSlot = timetableData[i];
+   
+    
+   // var row3 = document.createElement('tr');
+
+   var timeCell = document.createElement('td');
+    // Create cells for each day
+    if (timeSlot.day == 'MON'){
+      var row = document.createElement('tr');
+    
+    timeCell.innerText = timeSlot.day;
+    timeCell.innerText = timeSlot.name;
+    timeCell.innerText = timeSlot.start_time;
+    row.appendChild(timeCell);
+    }
+    if (timeSlot.day == 'TUE'){
+    var row = document.createElement('tr');
+    var timeCell = document.createElement('td');
+    timeCell.innerText = timeSlot.day;
+    timeCell.innerText = timeSlot.name;
+    timeCell.innerText = timeSlot.start_time;
+    row.appendChild(timeCell);
+    }
+
+    var days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+    for (var j = 0; j < days.length; j++) {
+      var day = days[j];
+      var dayCell = document.createElement('td');
+      dayCell.innerText = timeSlot[day];
+      row.appendChild(dayCell);
+    }
+    timetableBody.appendChild(row);
+   
+  }
+}
+
+    $(function() {
+        // Handle file selection event
+        $('#fileInput').on('change', function() {
+          // Get selected file name
+        var fileName = $(this).val().split('\\').pop();
+          // Update label text
+        $(this).next('.input-group-text').html(fileName);
+        $('#fileInput').css('display', 'block')
+        $('#select_button').css('display','none')
+        $('#convert_button').css('display','block')
+
+
+        //# previewFile()
+       
+         
+
+        });
+    });
+    
+  
+    
+ 
+   
+    const convert_button = document.getElementById("convert_button");
+
+    convert_button.addEventListener("click", function() {
+              
+                //runProgressBar(120);
+
+         
+           
+            $('#mybar_main').css('display','block')
+            $('#loader-text').css('display','block')
+          
+            $('#fileInput').css('display', 'none')
+            $('#select_button').css('display','none')
+            $('#convert_button').css('display','none')
+
+            
+            var myform = document.getElementById("upload_form");
+            var fd = new FormData(myform);
+            var i = 0;
+            move(i)
+
+            $.ajax({
+                url: "/perform_services/",
+                headers: {"X-CSRFToken": '{{csrf_token}}'},
+                data: fd,
+                cache: false,
+                processData: false,
+                contentType: false,
+                type: 'POST',
+
+             
+                success: function (dataofconfirm) {
+                  //  move(99)
+                    $('#fileInput').css('display', 'none')
+                    $('#select_button').css('display','none')
+                    $('#convert_button').css('display','none')
+                    
+                    $('#loader_container').css('display','none')
+                    $('#mybar_main').css('display','none')
+                    $('#loader-text').css('display','none')
+                    $('#download_button').css('display','block')
+                    
+                    //window.location.reload()
+                  
+                },
+                error: function (data) {
+                    //document.getElementById('save').innerHTML = '';
+                    $('#mybar_main').css('display','none')
+                    ShowNotify('Error', data.responseJSON.error, 'error');
+                }
+            });
+    });
+   
+    function move(i) {
+      if (i == 0) {
+        i = 1;
+        var elem = document.getElementById("myBar");
+        var width = 1;
+        var id = setInterval(frame, 1950);
+        function frame() {
+          if (width >= 100) {
+            clearInterval(id);
+            i = 0;
+          } else {
+            width++;
+            elem.style.width = width + "%";
+          }
+        }
+      }
+    }
+
+
+    function downloadFile() {
+      var title = $('#title').val();
+      console.log("titler",title)
+        $.ajax({ 
+          url: "/download_docx/?title="+title,
+          type: 'GET',
+          xhrFields: {
+          responseType: 'blob'
+          },
+          success: function(response) {
+            const url = window.URL.createObjectURL(response);
+            const link = document.createElement('a');
+            link.href = url;
+            var title = $('#title').val();
+            title=title.replaceAll(" ","-");
+            title='output'+title+'.docx'
+            link.download =title
+    
+           
+
+            // if (title.includes("Expert")) {
+            //  link.download = 'output_expert_resource.docx';
+            // }
+            // if (title.includes("Joss")) {
+            //   link.download = 'output_joss_search.docx';
+            // }
+            // if (title.includes("ASPION")) {
+            //   link.download = 'output_aspion_search.docx';
+            // }
+            // if (title.includes("Clarus")) {
+            //   link.download = 'output_clarus.docx';
+            // }
+            
+            link.click();
+            window.URL.revokeObjectURL(url);
+            $('#select_button').css('display','block');
+            $('#download_button').css('display','none');
+          },
+          error: function(xhr, status, error) {
+            console.log("error");
+          }
+        });
+      }
+
+
+// Call the runProgressBar function with a duration of 3 minutes (180 seconds)
+
+
+
+
+  
+   // Example JSON data
+
+      
+
+
+        function previewFile() {
+    
+            const preview = document.getElementById('preview');
+            const file = document.querySelector('input[type=file]').files[0];
+            const reader = new FileReader();
+        
+            reader.addEventListener("load", function () {
+              const pdfViewer = `<embed src="${reader.result}" width="500" height="600" type="application/docx">`;
+              preview.innerHTML = pdfViewer;
+            }, false);
+        
+            if (file) {
+              reader.readAsDataURL(file);
+            }
+          }
+        
+        //  document.querySelector('input[type=file]').addEventListener('change', previewFile);
+       
+
+
+        
+
+  
+  
+  
+  
+  
+  
+
+      
+
+</script>
+{% endblock %}
