@@ -117,6 +117,7 @@
                     <div class="margin-10px-top font-size14">{{item.start_time}}-{{item.end_time}}</div>
                     <div class="font-size13 text-light-gray">Kate Alley</div>
                  </td>
+                 {% if forloop.first %}
                   {% if item.const_obj %}
                   {% for con_obj in item.const_obj%}
                   <td>
@@ -127,6 +128,7 @@
                  {% endfor %}
 
 
+                  {% endif %}
                   {% endif %}
                  {% endfor %}
 
