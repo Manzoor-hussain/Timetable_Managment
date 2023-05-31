@@ -40,25 +40,44 @@ class UserSerializerForTimeTable(serializers.ModelSerializer):
         end_time_con = ''
         cons_day = ''
         ubi = Constraint.objects.filter(user=user_ ,day=day_value).last()
+        const_obj=''
+        #const_obj = Constraint.objects.filter(user=user_ ,day=day_value).distinct()
+        const_obj = Constraint.objects.filter(user=user_, day=day_value).values('user', 'day','name','start_time','end_time').distinct()
+
         #ubi = Constraint.objects.values('day').distinct()
+        mylist=['MONDAY','TUESDAY','WEDENDAY','THURSDAY','FRIDAY','SUNDAY']
+        
+        if const_obj.exists:
+            print("inside",const_obj)
+            if day_value in mylist:
+                
+
+                ret['const_obj'] = const_obj
+                mylist.remove(day_value)
+               
+        
+                
+            return ret
+
+        
        
        
-        if ubi:
-            is_active = True
+        # if ubi:
+        #     is_active = True
           
-            const_name = ubi.name
-            start_time_con = ubi.start_time
-            end_time_con = ubi.end_time
-            cons_day =instance.day
+        #     const_name = ubi.name
+        #     start_time_con = ubi.start_time
+        #     end_time_con = ubi.end_time
+        #     cons_day =instance.day
 
 
        
            
-        ret['const_name'] = const_name
-        ret['start_time_con'] = start_time_con
-        ret['end_time_con'] = end_time_con
-        ret['cons_day'] = cons_day
-        return ret
+        # ret['const_name'] = const_name
+        # ret['start_time_con'] = start_time_con
+        # ret['end_time_con'] = end_time_con
+        # ret['cons_day'] = cons_day
+       # return ret
         
 
 

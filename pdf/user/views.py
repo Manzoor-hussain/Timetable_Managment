@@ -29,7 +29,7 @@ import pdb
 
 # Create your views here.
 def myconstraint(request,cours,constraint_obj):
-    print(":request")
+    print(":request myconstraint")
     if cours:           
         for const in constraint_obj:
             if cours.start_time <= const.start_time <=cours.end_time or cours.start_time <= const.end_time <=cours.end_time:
@@ -43,8 +43,156 @@ def myconstraint(request,cours,constraint_obj):
         return True
 
 
+def check_for_day(request,course_,check):
+    day = request.POST.get('day')
+    day_2 = request.POST.get('day_2')
+   # course= request.POST.get('courses')
+    start_time_ = request.POST['start_time']
+    end_time_ = request.POST['end_time']
+    constraint_ = request.POST['constraint']
+    days=day.upper()
+    days_=days[:3]
    
+    start_time_2 = request.POST['start_time_2']
+    end_time_2 = request.POST['end_time_2']
+    constraint_2 = request.POST['constraint_2']
+    pdb.set_trace()
+   
+    for cours in course_:
+        print("inside foor loop day not match")
+        already_obj = Allstudent.objects.filter(user=request.user,title=check)
+        allstudent=Allstudent.objects.filter(user=request.user) 
+        timetable = Allcourse.objects.filter(allstudent__user=request.user,day=cours.day)
+        
+        
+        if not timetable:
+            
+            if already_obj:
+                continue
+            else:
+                constraint_obj=Constraint.objects.filter(user=request.user,day=cours.day)
+                if constraint_obj:
+                
+                    res=myconstraint(request,cours,constraint_obj)
+                    if res == True:
+                        Allstudent.objects.create(user=request.user, course=cours, title=check)
+                        
+                        already_cons=Constraint.objects.filter(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
+                        if already_cons:
+                            pass
+                        else:
+                            myob = Constraint.objects.create(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
+                        
+                        return True
+                    else:
+                        message1="constraint"
 
+
+
+                else:
+                    
+                    Allstudent.objects.create(user=request.user, course=cours, title=check)
+
+                    already_cons=Constraint.objects.filter(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
+                    if already_cons:
+                        pass
+                    else:
+                        myob = Constraint.objects.create(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
+                    
+                    print("not time table")
+                    return True
+        else:
+            if len(timetable) >=2:
+                course_list = list(timetable)
+
+                time_differences = []
+                for course1, course2 in zip(course_list, course_list[1:]):
+                    if course1.end_time <= cours.start_time <= course2.start_time or  course1.end_time <= cours.start_time <= course2.end_time :
+                        datetime1 = datetime.datetime.combine(datetime.date.today(), course1.end_time)
+                        datetime2 = datetime.datetime.combine(datetime.date.today(), course2.start_time)
+                        time_difference = datetime2 - datetime1
+                        time_differences.append(time_difference)
+                    elif cours.start_time >= course1.end_time or cours.start_time >= course2.end_time:
+                        if already_obj:
+                            continue
+                        else:
+                            constraint_obj=Constraint.objects.filter(user=request.user,day=cours.day)
+                            if constraint_obj:
+                
+                                res=myconstraint(request,cours,constraint_obj)
+                                if res == True:
+                                    Allstudent.objects.create(user=request.user, course=cours, title=check)
+                                    already_cons=Constraint.objects.filter(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
+                                    if already_cons:
+                                        pass
+                                    else:
+                                        myob = Constraint.objects.create(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
+                        
+                                    return True
+                                else:
+                                    message1="constraint"
+
+
+
+                            else:
+                                
+                                Allstudent.objects.create(user=request.user, course=cours, title=check)
+                                already_cons=Constraint.objects.filter(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
+                                if already_cons:
+                                    pass
+                                else:
+                                    myob = Constraint.objects.create(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
+                        
+                                print("not time table")
+                                return True
+
+
+                datetime1 = datetime.datetime.combine(datetime.date.today(), cours.start_time)
+                datetime2 = datetime.datetime.combine(datetime.date.today(), cours.end_time)
+                cours_time_difference = datetime2 - datetime1
+
+                for difference in time_differences:
+                    already_obj = Allstudent.objects.filter(user=request.user,title=check)
+                    
+                    if difference > cours_time_difference:
+                        if already_obj:
+                            continue
+                        else:
+                            constraint_obj=Constraint.objects.filter(user=request.user,day=cours.day)
+                            if constraint_obj:
+                
+                                res=myconstraint(request,cours,constraint_obj)
+                                if res == True:
+                                    Allstudent.objects.create(user=request.user, course=cours, title=check)
+                                    already_cons=Constraint.objects.filter(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
+                                    if already_cons:
+                                        pass
+                                    else:
+                                        myob = Constraint.objects.create(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
+                        
+                                    return True
+                                else:
+                                    message1="constraint"
+
+
+
+                            else:
+                                
+                                Allstudent.objects.create(user=request.user, course=cours, title=check)
+                                already_cons=Constraint.objects.filter(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
+                                if already_cons:
+                                    pass
+                                else:
+                                    myob = Constraint.objects.create(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
+                        
+                                print("not time  under 495 table")
+                                return True
+                    
+                    else:
+                        continue
+
+
+    return False
 
 
 @login_required
@@ -77,6 +225,7 @@ def perform_services(request):
 
     if request.method =='GET':
         #return redirect('user:dashboard')
+        print("hussain")
         course_ = Allcourse.objects.values('name').distinct()
         return render(request, 'user/index.html',context={'cource': course_})
     
@@ -106,6 +255,7 @@ def perform_services(request):
     message=''
 
     for check in checked_checkboxes:
+        check_for_day(request,check,days_)
        
         
       
@@ -124,6 +274,7 @@ def perform_services(request):
                 course_= Allcourse.objects.filter(name=check)
                 
                 if course_:
+                    
                     for cours in course_:
                         print("inside foor loop")
                         already_obj = Allstudent.objects.filter(user=request.user,title=check)
@@ -241,7 +392,7 @@ def perform_services(request):
                                             Allstudent.objects.create(user=request.user, course=cours, title=check)
                                             break
 
-                                    message = +"constraint"
+                                    message = "constraint"
                             
             
                         
@@ -249,6 +400,7 @@ def perform_services(request):
                 #THis is code for when User have no constrint
                  
             elif day:
+               
                 print("day hai")
                 course_= Allcourse.objects.filter(name=check ,day=days_)
                 if not course_:
@@ -271,7 +423,7 @@ def perform_services(request):
                     print("here")
                     if course_.start_time <= start_timee <= course_.end_time or course_.start_time <= end_timeee <= course_.end_time:
                         if day_2:
-
+             
                             print("days2")
                             days_22=day_2.upper()
                             days_2=days_22[:3]
@@ -281,9 +433,10 @@ def perform_services(request):
                             
                            
                             if course_:
+                               
                                 for cours in course_:
                                     if cours.start_time <= start_timee_2 <= cours.end_time or cours.start_time <= end_timee_2 <= cours.end_time:
-                                        course_= Allcourse.objects.filter(name=check).exclude(day=days_).exclude(day=day_2)
+                                        course_= Allcourse.objects.filter(name=check).exclude(day=days_).exclude(day=days_2)
                                        
                                         if course_:
                                             for cours in course_:
@@ -294,18 +447,19 @@ def perform_services(request):
                                             
                                                 
                                                 if not timetable:
-                                                    #myob = Constraint.objects.create(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
+                                                    
                                                     if already_obj:
                                                         continue
                                                     else:
                                                         constraint_obj=Constraint.objects.filter(user=request.user,day=cours.day)
-                                                        if constraint_obj:
+                                                        if constraint_obj.exists():
                                                         
                                                             res=myconstraint(request,cours,constraint_obj)
                                                             if res == True:
                                                                 Allstudent.objects.create(user=request.user, course=cours, title=check)
                                                                 already_cons=Constraint.objects.filter(user=request.user,name=constraint_2, day=days_22, start_time = start_time_2, end_time=end_time_2)
-                                                                if already_cons:
+                                                                if already_cons.exists():
+                                                                    print("pass")
                                                                     pass
                                                                 else:
                                                                     myob = Constraint.objects.create(user=request.user,name=constraint_2, day=days_22, start_time = start_time_2, end_time=end_time_2)
@@ -319,7 +473,8 @@ def perform_services(request):
                                                             
                                                             Allstudent.objects.create(user=request.user, course=cours, title=check)
                                                             already_cons=Constraint.objects.filter(user=request.user,name=constraint_2, day=days_22, start_time = start_time_2, end_time=end_time_2)
-                                                            if already_cons:
+                                                            if already_cons.exist():
+
                                                                 pass
                                                             else:
                                                                 myob = Constraint.objects.create(user=request.user,name=constraint_2, day=days_22, start_time = start_time_2, end_time=end_time_2)
@@ -416,7 +571,7 @@ def perform_services(request):
                                                                     
                                                                     print("day 2 hai time table")
                                                                     break
-                                                            message = +"constraint"
+                                                            message = "constraint"
                                         else: 
                                             message ="constrint"
                                             print("no objects")               
@@ -435,7 +590,7 @@ def perform_services(request):
                                         
                                         
                                         if not timetable:
-                                            #myob = Constraint.objects.create(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
+                                            
                                             if already_obj:
                                                 continue
                                             else:
@@ -576,7 +731,7 @@ def perform_services(request):
                             
 
 
-                        
+                        #this code for day only
                         else:
                             try:
                                     #first day and check another 
@@ -591,7 +746,7 @@ def perform_services(request):
                                        
                                         
                                         if not timetable:
-                                            #myob = Constraint.objects.create(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
+                                           
                                             if already_obj:
                                                 continue
                                             else:
@@ -620,6 +775,7 @@ def perform_services(request):
                                                     if already_cons:
                                                         pass
                                                     else:
+                                                        print("creat cons",check)
                                                         myob = Constraint.objects.create(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
                                                        
                                                     print("not time table")
@@ -716,7 +872,7 @@ def perform_services(request):
                                                        
                                                             print("not time table")
                                                             break
-                                                    message = +"constraint"
+                                                    message = "constraint"
                  
                                                 
                                    # message=message+ "you can take cousre due to your constraint hii"
@@ -725,6 +881,7 @@ def perform_services(request):
                                     ##return render(request,'user/index.html',context={'cource':course_all, 'errors':message})
                                 else:
                                     message1=f"{check}"
+                                  
                                     message=message+ message1
                                     ##course_all= Allcourse.objects.values('name').distinct()
                                    # print("mycourse",course_all)
@@ -751,7 +908,7 @@ def perform_services(request):
                               
                                         
                                 if not timetable:
-                                    #myob = Constraint.objects.create(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
+                                   
                                     constraint_obj=Constraint.objects.filter(user=request.user,day=cours.day)
                                     if constraint_obj:
                                     
@@ -767,7 +924,14 @@ def perform_services(request):
                                     else:
                                         
                                         Allstudent.objects.create(user=request.user, course=cours, title=check)
-                                        myob = Constraint.objects.create(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
+
+                                        already_cons=Constraint.objects.filter(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
+                                        if already_cons:
+                                            pass
+                                        else:
+                                            myob = Constraint.objects.create(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
+                                    
+                                                           
                                         print("not time table")
                                         break
                                 else:
@@ -796,7 +960,13 @@ def perform_services(request):
                                                         res=myconstraint(request,cours,constraint_obj)
                                                         if res == True:
                                                             Allstudent.objects.create(user=request.user, course=cours, title=check)
-                                                            myob = Constraint.objects.create(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
+                                                            already_cons=Constraint.objects.filter(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
+                                                            if already_cons:
+                                                                pass
+                                                            else:
+                                                                myob = Constraint.objects.create(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
+                                                       
+                                                            print("not time table")
                                                             break
                                                         else:
                                                             message1="constraint"
@@ -806,7 +976,13 @@ def perform_services(request):
                                                     else:
                                                         
                                                         Allstudent.objects.create(user=request.user, course=cours, title=check)
-                                                        myob = Constraint.objects.create(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
+                                                        already_cons=Constraint.objects.filter(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
+                                                        if already_cons:
+                                                            pass
+                                                        else:
+                                                            myob = Constraint.objects.create(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
+                                                    
+                                                        print("not time table")
                                                         print("not time table")
                                                         break
                                             
@@ -828,7 +1004,13 @@ def perform_services(request):
                                                     res=myconstraint(request,cours,constraint_obj)
                                                     if res == True:
                                                         Allstudent.objects.create(user=request.user, course=cours, title=check)
-                                                        myob = Constraint.objects.create(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
+                                                        already_cons=Constraint.objects.filter(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
+                                                        if already_cons:
+                                                            pass
+                                                        else:
+                                                            myob = Constraint.objects.create(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
+                                                    
+                                                        print("not time table")
                                                         break
                                                     else:
                                                         message1="constraint"
@@ -838,10 +1020,16 @@ def perform_services(request):
                                                 else:
                                                     
                                                     Allstudent.objects.create(user=request.user, course=cours, title=check)
-                                                    myob = Constraint.objects.create(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
+                                                    already_cons=Constraint.objects.filter(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
+                                                    if already_cons:
+                                                        pass
+                                                    else:
+                                                        myob = Constraint.objects.create(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
+                                                
+                                                    print("not time table")
                                                     print("not time table")
                                                     break
-                                            message = +"constraint"
+                                            message = "constraint"
                                       
 
                                    
@@ -855,18 +1043,14 @@ def perform_services(request):
                         except Exception as e:
                             print("exceptio All student",e)
                             pass
-                        # try:
-                        #     Constraint.objects.create(user=request.user,name=constraint_,day=days,start_time=start_time_,end_time=end_time_)
-                        # except Exception as e:
-                        #     print("exception Constrain",e)
-                        #     pass
+                       
                 else:
                     
                     message1=f"{check}"
                     
                     message = message +message1
                     print("final")
-                ##return render(request, 'user/index.html',context={'course': course_all, "errors":message})
+                
                 
 
     allstudent=Allstudent.objects.filter(user=request.user)
@@ -874,11 +1058,11 @@ def perform_services(request):
   
     
     timetable = Allcourse.objects.filter(allstudent__user=request.user).order_by('start_time')
-    print("message",message)
+    print("message hussain",message)
     ss = UserSerializerForTimeTable(timetable,many=True ,context={'request': request})
 
 
-
+   
     # Sort the data by 'day' field
     sorted_data = sorted(ss.data, key=itemgetter('day'))
 
@@ -907,7 +1091,12 @@ def perform_services(request):
 
     # print("context",context)
     if message:
-        return render(request, 'user/index.html',context={'course': course_all, "errors":message})
+        course_ = Allcourse.objects.values('name').distinct()
+        new ="you can not take course "+message +" due to constraint"
+        print("course last",course_)
+       
+        return render(request, 'user/index.html',context={'cource': course_, "errors":new})
+        
 
     else:
         return render(request, 'user/upload_file.html',{'grouped_dict': grouped_dict})
@@ -946,16 +1135,16 @@ def show_timetable(request):
 
     # print("sorted",sorted_dict)
 
-    # print("group",grouped_dict)
+    print("group last Final",grouped_dict)
 
     # Print the grouped dictionary
     context = {}
 
     for day, group in grouped_dict.items():
-        print("days",day)
+        #print("days",day,group)
         context[day] = list(group)
 
-    print("context:", context)
+    #print("context:", context)
 
     # context ={}
     # for day, group in grouped_dict.items():

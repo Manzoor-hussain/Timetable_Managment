@@ -58,7 +58,7 @@ def login_page(request):
            
 
             if user_.is_superuser:
-                response = redirect('superadmin:dashboard')
+                response = redirect('user:dashboard')
             else:
                 response = redirect('user:dashboard')
             response.set_cookie(key='name', value=user_.email)

@@ -117,12 +117,14 @@
                     <div class="margin-10px-top font-size14">{{item.start_time}}-{{item.end_time}}</div>
                     <div class="font-size13 text-light-gray">Kate Alley</div>
                  </td>
-                  {% if item.const_name %}
+                  {% if item.const_obj %}
+                  {% for con_obj in item.const_obj%}
                   <td>
-                    <span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16  xs-font-size13">{{item.const_name}}</span>
-                    <div class="margin-10px-top font-size14">{{item.start_time_con}}-{{item.end_time_con}}</div>
+                    <span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16  xs-font-size13">{{con_obj.name}}</span>
+                    <div class="margin-10px-top font-size14">{{con_obj.start_time}}-{{con_obj.end_time}}</div>
                     <div class="font-size13 text-light-gray">Kate Alley</div>
                  </td>
+                 {% endfor %}
 
 
                   {% endif %}
