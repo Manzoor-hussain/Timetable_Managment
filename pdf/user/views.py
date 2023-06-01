@@ -30,23 +30,34 @@ import pdb
 # Create your views here.
 def myconstraint(request,cours,constraint_obj):
     print(":request myconstraint")
-   
     if cours:
-                 
         for const in constraint_obj:
-            if const.end_time <= cours.start_time or const.start_time<=cours.end_time:
-            #if cours.start_time >= const.start_time <=cours.end_time or cours.start_time <= const.end_time <=cours.end_time:
-                print("in")
-                return True
+            if const.start_time <= cours.start_time <= const.end_time or const.start_time <= cours.end_time <= const.end_time:
+                # No overlap between constraint and cours
+                print("Overlap found")
+                return False
             else:
-                continue
-        return  False
-    
+                print("Overlap found")
+                return True
+   # return False
+
+   
+    # if cours:
+                 
+    #     for const in constraint_obj:
+    #         if const.end_time <= cours.start_time or const.start_time<=cours.end_time:
+    #         #if cours.start_time >= const.start_time <=cours.end_time or cours.start_time <= const.end_time <=cours.end_time:
+    #             print("in")
+    #             return True
+    #         else:
+    #             continue
+    #     return  False
+
    
 def check_constraint_to_add(request,name,day,start_time,end_time):
     days = day[:3]
    
-    constraint__=Constraint.objects.filter(day=days)
+    constraint__=Constraint.objects.filter(user=request.user,day=day)
     start_timee_2 = time.fromisoformat(start_time)
     end_timee_2 = time.fromisoformat(end_time)
 
@@ -57,7 +68,7 @@ def check_constraint_to_add(request,name,day,start_time,end_time):
             if cont.start_time <= start_timee_2 <= cont.end_time or cont.start_time <= end_timee_2 <= cont.end_time:
                 continue
             else:
-                student=Allstudent.objects.filter(day=days)
+                student=Allstudent.objects.filter(user=request.user ,day=days)
                 if student:
                     for stu in student:
                         if stu.start_time <= start_timee_2 <=stu.end_time or  stu.start_time <= end_timee_2 <=stu.end_time:
@@ -144,6 +155,7 @@ def check_constraint_to_add(request,name,day,start_time,end_time):
 
 
 def check_for_day(request,course_,check,dday):
+    print("uset",request.user)
     day = request.POST.get('day')
     day_2 = request.POST.get('day_2')
    # course= request.POST.get('courses')
@@ -192,7 +204,7 @@ def check_for_day(request,course_,check,dday):
                    
 
                     if res == True:
-                        pdb.set_trace()
+                       
                         Allstudent.objects.create(user=request.user, course=cours, title=check)
                         if dday == 1:
                             already_cons=Constraint.objects.filter(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
@@ -221,7 +233,7 @@ def check_for_day(request,course_,check,dday):
                 else:
                   
                     print("khan")
-                    pdb.set_trace()
+                   
                     Allstudent.objects.create(user=request.user, course=cours, title=check)
 
                     if dday == 1:
@@ -308,9 +320,10 @@ def check_for_day(request,course_,check,dday):
             else:    
                 timeta_ = timetable[0]
                 if count == 3:
-                    pdb.set_trace()
+                   pass
               
                 if cours.start_time <= timeta_.start_time <= cours.end_time or  cours.start_time <= timeta_.end_time <= cours.end_time:
+                    
                     print("match continur")
                     continue
                 else:
@@ -602,7 +615,7 @@ def show_timetable(request):
         if key in  grouped_dict:
             grouped_dict[days[key]] = grouped_dict[key]
             del grouped_dict[key]
-    print("gropu",grouped_dict)
+   
     # pdb.set_trace()
         # else:
         #     full_day=days_2[key]
@@ -623,9 +636,113 @@ def show_timetable(request):
 
    
     # print("context",context)
+    sorted_dict = {}
+    for k in grouped_dict:
+        obj_list = []
+        first = True
+        for i in grouped_dict[k]:
+            obj = {}
+            for j in i:
+                if j =='const_obj':
+                    if first:
+                        for l in i[j]:
+                            obj_list.append({'const_obj' : l})
+                else:
+                    obj[j] = i[j]
+            obj_list.append({'object' : obj})
+            first = False
+        sorted_dict[k] = sorted(obj_list, key = lambda x:[str(x[y]['start_time']).replace(':','') for y in x])
    
+    data=  {1: [{'const_obj': {'id': 69,
+    'user_id': 10,
+    'day': 'MONDAY',
+    'start_time': datetime.time(9, 0),
+    'end_time': datetime.time(11, 50),
+    'name': 'Shopping'}},
+  {'object': {'id': 14,
+    'day': 'MON',
+    'name': 'Computer Science Project',
+    'studentcount': 30,
+    'start_time': '13:00:00',
+    'end_time': '16:50:00',
+    'user': [1]}}],
+ 2: [{'const_obj': {'id': 74,
+    'user_id': 10,
+    'day': 'TUESDAY',
+    'start_time': datetime.time(7, 0),
+    'end_time': datetime.time(8, 0),
+    'name': 'test'}},
+  {'object': {'id': 12,
+    'day': 'TUE',
+    'name': 'Parrallel computing',
+    'studentcount': 35,
+    'start_time': '08:00:00',
+    'end_time': '12:50:00',
+    'user': []}},
+  {'object': {'id': 1,
+    'day': 'TUE',
+    'name': 'Advanced Algorithm',
+    'studentcount': 45,
+    'start_time': '13:00:00',
+    'end_time': '16:50:00',
+    'user': []}},
+  {'const_obj': {'id': 75,
+    'user_id': 10,
+    'day': 'TUESDAY',
+    'start_time': datetime.time(17, 0),
+    'end_time': datetime.time(18, 0),
+    'name': 'Muneeb'}}],
+ 3: [{'object': {'id': 7,
+    'day': 'WED',
+    'name': 'Machine Learning',
+    'studentcount': 3,
+    'start_time': '08:00:00',
+    'end_time': '12:50:00',
+    'user': []}},
+  {'const_obj': {'id': 73,
+    'user_id': 10,
+    'day': 'WEDNESDAY',
+    'start_time': datetime.time(13, 0),
+    'end_time': datetime.time(14, 0),
+    'name': 'Practive'}},
+  {'object': {'id': 19,
+    'day': 'WED',
+    'name': 'Databases',
+    'studentcount': 40,
+    'start_time': '14:00:00',
+    'end_time': '16:50:00',
+    'user': [1]}}],
+ 4: [{'object': {'id': 5,
+    'day': 'THU',
+    'name': 'Compilation',
+    'studentcount': 2,
+    'start_time': '08:00:00',
+    'end_time': '11:50:00',
+    'user': []}},
+  {'const_obj': {'id': 68,
+    'user_id': 10,
+    'day': 'THURSDAY',
+    'start_time': datetime.time(14, 0),
+    'end_time': datetime.time(16, 0),
+    'name': 'Playing'}}],
+ 7: [{'object': {'id': 18,
+    'day': 'SUN',
+    'name': '.Net Programming',
+    'studentcount': 36,
+    'start_time': '09:00:00',
+    'end_time': '12:50:00',
+    'user': [1]}},
+  {'object': {'id': 16,
+    'day': 'SUN',
+    'name': 'Game Development',
+    'studentcount': 14,
+    'start_time': '14:00:00',
+    'end_time': '16:50:00',
+    'user': [1]}}]}
+
+    
    
-    return render(request, 'user/upload_file.html',{'grouped_dict': grouped_dict})
+    return render(request, 'user/upload_file.html',{'grouped_dict': grouped_dict ,'data':sorted_dict})
  
 
 
@@ -660,7 +777,7 @@ def download_docx(request):
 
     #output
 
-#     {1: [{'const_obj': {'id': 69,
+#   data=  {1: [{'const_obj': {'id': 69,
 #     'user_id': 10,
 #     'day': 'MONDAY',
 #     'start_time': datetime.time(9, 0),
@@ -746,4 +863,3 @@ def download_docx(request):
 #     'start_time': '14:00:00',
 #     'end_time': '16:50:00',
 #     'user': [1]}}]}
-
