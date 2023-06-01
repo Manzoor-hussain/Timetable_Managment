@@ -83,22 +83,22 @@
 
             {% for day, items in grouped_dict.items %}
                 <tr>
-                  {% if day == 'MON'%}
+                  {% if day == 1%}
                   <th class="text-uppercase align-middle">Monday</th>
                   {% endif %}
-                  {% if day == 'TUE'%}
+                  {% if day == 2%}
                   <th class="text-uppercase align-middle">Tuesday</th>
                   {% endif %}
-                  {% if day == 'WED'%}
+                  {% if day == 3%}
                   <th class="text-uppercase align-middle">Wednesday</th>
                   {% endif %}
-                  {% if day == 'THU'%}
+                  {% if day == 4%}
                   <th class="text-uppercase align-middle">Thursday</th>
                   {% endif %}
-                  {% if day == 'FRI'%}
+                  {% if day == 5%}
                   <th class="text-uppercase align-middle">Friday</th>
                   {% endif %}
-                  {% if day == 'SUN'%}
+                  {% if day == 7%}
                   <th class="text-uppercase align-middle">SUNDAY</th>
                   {% endif %}
 
@@ -111,19 +111,31 @@
                     <span class="bg-yellow padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16  xs-font-size13">{{item.name}}</span>
                     {% elif item.name == "Advanced Algorithm" %}
                     <span class="bg-lightred padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16  xs-font-size13">{{item.name}}</span>
+                    {% elif item.name == "Databases" %}
+                    <span  style='background-color: red;'class="padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16  xs-font-size13">{{item.name}}</span>
+                    
+                    {% elif item.name == "Computer Science Project" %}
+                    <span  style='background-color:burlywood;'class="padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16  xs-font-size13">{{item.name}}</span>
+                   
+
+                    {% elif item.name == "Computer Graphics" %}
+                    <span  style='background-color:darkorange;'class="padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16  xs-font-size13">{{item.name}}</span>
                     {%else %}
+                    
                     <span class="bg-pink padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16  xs-font-size13">{{item.name}}</span>
                     {%endif%}
                     <div class="margin-10px-top font-size14">{{item.start_time}}-{{item.end_time}}</div>
-                    <div class="font-size13 text-light-gray">Kate Alley</div>
+                    <!-- <div class="font-size13 text-light-gray">Kate Alley</div> -->
                  </td>
                  {% if forloop.first %}
                   {% if item.const_obj %}
+                 
+                 
                   {% for con_obj in item.const_obj%}
                   <td>
                     <span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16  xs-font-size13">{{con_obj.name}}</span>
                     <div class="margin-10px-top font-size14">{{con_obj.start_time}}-{{con_obj.end_time}}</div>
-                    <div class="font-size13 text-light-gray">Kate Alley</div>
+                    <!-- <div class="font-size13 text-light-gray">Kate Alley</div> -->
                  </td>
                  {% endfor %}
 
@@ -172,102 +184,16 @@
 <script>
 
 
-var timetableData = [
-  { time: '09:00', monday: 'Event A', tuesday: 'Event B', wednesday: 'Event C', thursday: 'Event D', friday: 'Event E' },
-  { time: '10:00', monday: 'Event F', tuesday: 'Event G', wednesday: 'Event H', thursday: 'Event I', friday: 'Event J' },
-  // Add more timetable data as needed
-];
-var data=[
-    {
-        "id": 10,
-        "day": "MON",
-        "name": "Parallel computing",
-        "studentcount": 45,
-        "start_time": "09:00:00",
-        "end_time": "13:50:00",
-        "user": [],
-        "const_name": "practice",
-        "start_time_con": null,
-        "end_time_con": null,
-        "cons_day": "MON"
-    },
-    {
-        "id": 3,
-        "day": "TUE",
-        "name": "Advanced Algorithm",
-        "studentcount": 20,
-        "start_time": "11:00:00",
-        "end_time": "13:50:00",
-        "user": [],
-        "const_name": "",
-        "start_time_con": "",
-        "end_time_con": "",
-        "cons_day": ""
-    },
-    {
-        "id": 6,
-        "day": "TUE",
-        "name": "Machine Learning",
-        "studentcount": 1,
-        "start_time": "14:00:00",
-        "end_time": "18:50:00",
-        "user": [],
-        "const_name": "",
-        "start_time_con": "",
-        "end_time_con": "",
-        "cons_day": ""
-    }
-]
+
 
 
 // Call the function to populate the timetable with the data
-populateTimetable(data);
 
 
 
 
-function populateTimetable(timetableData) {
-  console.log("hussain")
-  var timetableBody = document.getElementById('timetable-body');
 
-  // Iterate over the timetable data and create rows
-  var row1 ,row2;
-  for (var i = 0; i < timetableData.length; i++) {
-    var timeSlot = timetableData[i];
-   
-    
-   // var row3 = document.createElement('tr');
 
-   var timeCell = document.createElement('td');
-    // Create cells for each day
-    if (timeSlot.day == 'MON'){
-      var row = document.createElement('tr');
-    
-    timeCell.innerText = timeSlot.day;
-    timeCell.innerText = timeSlot.name;
-    timeCell.innerText = timeSlot.start_time;
-    row.appendChild(timeCell);
-    }
-    if (timeSlot.day == 'TUE'){
-    var row = document.createElement('tr');
-    var timeCell = document.createElement('td');
-    timeCell.innerText = timeSlot.day;
-    timeCell.innerText = timeSlot.name;
-    timeCell.innerText = timeSlot.start_time;
-    row.appendChild(timeCell);
-    }
-
-    var days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
-    for (var j = 0; j < days.length; j++) {
-      var day = days[j];
-      var dayCell = document.createElement('td');
-      dayCell.innerText = timeSlot[day];
-      row.appendChild(dayCell);
-    }
-    timetableBody.appendChild(row);
-   
-  }
-}
 
     $(function() {
         // Handle file selection event

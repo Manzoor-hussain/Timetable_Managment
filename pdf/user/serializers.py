@@ -42,17 +42,19 @@ class UserSerializerForTimeTable(serializers.ModelSerializer):
         ubi = Constraint.objects.filter(user=user_ ,day=day_value).last()
         const_obj=''
         #const_obj = Constraint.objects.filter(user=user_ ,day=day_value).distinct()
-        const_obj = Constraint.objects.filter(user=user_, day=day_value).values('user', 'day','name','start_time','end_time').distinct()
+        const_obj = Constraint.objects.filter(user=user_, day=day_value).values('user','day','name','start_time','end_time').distinct()
 
         #ubi = Constraint.objects.values('day').distinct()
-        mylist=['MONDAY','TUESDAY','WEDENDAY','THURSDAY','FRIDAY','SUNDAY']
-        
+        mylist=['MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SUNDAY']
+       
         if const_obj.exists:
-            print("inside",const_obj)
+            dict_list = list(const_obj.values())
+           
             if day_value in mylist:
+               
                 
 
-                ret['const_obj'] = const_obj
+                ret['const_obj'] = dict_list
                 mylist.remove(day_value)
                
         
