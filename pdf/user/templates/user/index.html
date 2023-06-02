@@ -25,7 +25,7 @@
       overflow-y: scroll;">
 
         <div class="card-body bg-light">
-          <form method="POST" action="{% url 'user:perform_services' %}">
+          <form method="POST" action="{% url 'user:select_courses' %}">
             {% csrf_token %}
 
             <div class="container">
