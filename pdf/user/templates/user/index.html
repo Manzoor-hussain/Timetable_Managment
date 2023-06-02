@@ -6,14 +6,21 @@
 
 
 
-
+{% load custom_filters %}
 
 <div class="container">
   {% if errors %}
-  <div><p style="color: red; font-size: 20px; text-align: center;">{{errors}}</p></div>
+  <div><p style="color: red; font-size: 15px; text-align: center;">{{errors}}</p></div>
+ 
+  
   
 
   {% endif%}
+
+  {% if const_errors %}
+  <div><p style="color: red; font-size: 15px; text-align: center;">{{const_errors}}</p></div>
+
+  {% endif %}
 
   <div class=" text-center mt-5 ">
     <h1>Available Course</h1>

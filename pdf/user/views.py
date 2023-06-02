@@ -17,6 +17,8 @@ from  datetime import time
 from itertools import groupby
 from operator import itemgetter
 from collections import OrderedDict
+from datetime import datetime, time
+import pdb
 
 # Create your views here.
 '''
@@ -47,19 +49,24 @@ def check_already_constraint(request,cours,constraint_obj):
 '''
 def check_constraint_to_add(request,name,day,start_time,end_time):
     days = day[:3]
+  
    
-    constraint__=Constraint.objects.filter(user=request.user,day=day)
+    constraint_obj=Constraint.objects.filter(user=request.user,day=day)
     start_timee_2 = time.fromisoformat(start_time)
     end_timee_2 = time.fromisoformat(end_time)
 
-    if constraint__:
+    if constraint_obj:
        
-        for cont in constraint__:
-
-            if cont.start_time <= start_timee_2 <= cont.end_time or cont.start_time <= end_timee_2 <= cont.end_time:
+        for const in constraint_obj:
+          
+          
+            if const.start_time <= start_timee_2 <= const.end_time or const.start_time <= end_timee_2 <= const.end_time:
+                print("contine")
                 continue
             else:
-                student=Allstudent.objects.filter(user=request.user ,day=days)
+                print("else")
+                allstudent=Allstudent.objects.filter(user=request.user) 
+                student = Allcourse.objects.filter(allstudent__user=request.user,day=days)
                 if student:
                     for stu in student:
                         if stu.start_time <= start_timee_2 <=stu.end_time or  stu.start_time <= end_timee_2 <=stu.end_time:
@@ -398,6 +405,7 @@ def select_courses(request):
     '''
 
     if request.method =='GET':
+        pdb.set_trace
         course_ = Allcourse.objects.values('name').distinct()
         return render(request, 'user/index.html',context={'cource': course_})
     
@@ -415,10 +423,10 @@ def select_courses(request):
     start_time_ = request.POST['start_time']
     end_time_ = request.POST['end_time']
     constraint_ = request.POST['constraint']
-    
     days=day.upper()
     days_=days[:3]
     day_2 = request.POST.get('day_2')
+    days_2= day_2.upper()
     start_time_2 = request.POST['start_time_2']
     end_time_2 = request.POST['end_time_2']
     constraint_2 = request.POST['constraint_2']
@@ -426,115 +434,157 @@ def select_courses(request):
        
         
     message=''
+    const_message =''
     
     '''
      below code  for loop executing for courses which user selecting one and more 
      cousrses .for loop take course one by one course.
     '''
-    for check in checked_checkboxes_courses:  
-        already_ = Allstudent.objects.filter(user=request.user,title=check)
-        if already_:
-            continue
-        else:
-            '''
-            below code  for if user not selecting any constraint
-            '''
-            if not day:
-             
-                course_= Allcourse.objects.filter(name=check)
-                if course_:
-                    res=check_for_day(request,course_,check,0)
-                    if res == False:
-                        message1 = f"{check}"
-                        message = message + message1 
-                else:
-                    message1=f"{check}"
-                    message=message+ message1                      
-                           
-            elif day:
-             
-                course_= Allcourse.objects.filter(name=check ,day=days_)
-                if not course_:
-                    course_= Allcourse.objects.filter(name=check).exclude(day=days_)
-            
-                if course_.exists():
-                   
-                    course_ = course_.last()                
-                    start_timee = time.fromisoformat(start_time_)
-                    end_timeee = time.fromisoformat(end_time_)
-                   
-                  
-                    if course_.start_time <= start_timee <= course_.end_time or course_.start_time <= end_timeee <= course_.end_time:
-                        if day_2:
-                          
-                            days_22=day_2.upper()
-                            days_2=days_22[:3]
-                            course_= Allcourse.objects.filter(name=check ,day=days_2).exclude(day=days_)
-                            start_timee_2 = time.fromisoformat(start_time_2)
-                            end_timee_2 = time.fromisoformat(end_time_2)       
-                            if course_:
-                                for cours in course_:
-                                    if cours.start_time <= start_timee_2 <= cours.end_time or cours.start_time <= end_timee_2 <= cours.end_time:
-                                        course_= Allcourse.objects.filter(name=check).exclude(day=days_).exclude(day=days_2)
-                                        if course_:
-                                            check_for_day(request,course_,check,2)
-                                        else: 
-                                            message ="constrint"
-                                                       
-                                        
-                            else:
-                                course_= Allcourse.objects.filter(name=check).exclude(day=days_).exclude(day=days_2)
-    
+  
+    if not checked_checkboxes_courses:
+      
+        if day:
+            check_constraint_to_add(request,constraint_,days,start_time_,end_time_)
+           
+            exist_const= Constraint.objects.filter(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
+            if exist_const.exists():
+                pass
+            else:
+                const_message =const_message + constraint_
+        if day_2:
+            check_constraint_to_add(request,constraint_2,days_2,start_time_2,end_time_2)
+            exist_const = Constraint.objects.filter(user=request.user,name=constraint_2, day=days_2, start_time = start_time_2, end_time=end_time_2)
+            if exist_const.exists():
+                pass
+            else:
+                const_message =const_message + constraint_
+
+
+    else:  
+        for check in checked_checkboxes_courses:  
+            already_ = Allstudent.objects.filter(user=request.user,title=check)
+            if already_:
+                continue
+            else:
+                '''
+                below code  for if user not selecting any constraint
+                '''
+                if not day:
+                
+                    course_= Allcourse.objects.filter(name=check)
+                    if course_:
+                        res=check_for_day(request,course_,check,0)
+                        if res == False:
+                            message1 = f"{check}"
+                            message = message + message1 
+                    else:
+                        message1=f"{check}"
+                        message=message+ message1                      
+                            
+                elif day:
+                    
+                    '''
+                    below code execute when user select any constraint with courses
+                    '''
+                    course_= Allcourse.objects.filter(name=check ,day=days_)
+                    if not course_:
+                        course_= Allcourse.objects.filter(name=check).exclude(day=days_)
+                
+                    if course_.exists():
+                    
+                        course_ = course_.last()                
+                        start_timee = time.fromisoformat(start_time_)
+                        end_timeee = time.fromisoformat(end_time_)
+                    
+                    
+                        if course_.start_time <= start_timee <= course_.end_time or course_.start_time <= end_timeee <= course_.end_time:
+                            if day_2:
+                                '''
+                                    below code execute when user select any two constraint with courses
+                                '''
+                            
+                                days_22=day_2.upper()
+                                days_2=days_22[:3]
+                                course_= Allcourse.objects.filter(name=check ,day=days_2).exclude(day=days_)
+                                start_timee_2 = time.fromisoformat(start_time_2)
+                                end_timee_2 = time.fromisoformat(end_time_2)       
                                 if course_:
-                                    res =check_for_day(request,course_,check ,2)
-                                    if res == False:
-                                        message1 = f"{check}"
-                                        message = message + message1   
+                                    for cours in course_:
+                                        if cours.start_time <= start_timee_2 <= cours.end_time or cours.start_time <= end_timee_2 <= cours.end_time:
+                                            course_= Allcourse.objects.filter(name=check).exclude(day=days_).exclude(day=days_2)
+                                            if course_:
+                                                check_for_day(request,course_,check,2)
+                                            else: 
+                                                message ="constrint"
+                                                        
+                                            
                                 else:
-                                    message1=f"{check}"
-                                    message=message+ message1
+                                    course_= Allcourse.objects.filter(name=check).exclude(day=days_).exclude(day=days_2)
+        
+                                    if course_:
+                                        res =check_for_day(request,course_,check ,2)
+                                        if res == False:
+                                            message1 = f"{check}"
+                                            message = message + message1   
+                                    else:
+                                        message1=f"{check}"
+                                        message=message+ message1
+
+                            else:
+                                try:
+                                        #first day and check another 
+                                    course_= Allcourse.objects.filter(name=check).exclude(day=days_)
+                                    if course_:
+                                        res =check_for_day(request,course_,check,1)
+                                        if res == False:
+                                            message1 = f"{check}"
+                                            message = message + message1   
+                                    else:
+                                        message1=f"{check}"
+                                        message=message+ message1
+                                    
+                                except Exception as e :
+                                    pass
 
                         else:
                             try:
-                                    #first day and check another 
                                 course_= Allcourse.objects.filter(name=check).exclude(day=days_)
                                 if course_:
-                                    res =check_for_day(request,course_,check,1)
-                                    if res == False:
-                                        message1 = f"{check}"
-                                        message = message + message1   
-                                else:
-                                    message1=f"{check}"
-                                    message=message+ message1
-                                 
-                            except Exception as e :
+                                    check_for_day(request,course_,check,1)              
+                            except Exception as e:
                                 pass
-
+                        
                     else:
-                        try:
-                            course_= Allcourse.objects.filter(name=check).exclude(day=days_)
-                            if course_:
-                                check_for_day(request,course_,check,1)              
-                        except Exception as e:
-                            pass
-                       
-                else:
+                        
+                        message1=f"{check}"
+                        
+                        message = message +message1
                     
-                    message1=f"{check}"
-                    
-                    message = message +message1
-                 
                 
-    
-    if message:
+    '''
+        below code execute w
+    '''
+    if checked_checkboxes_courses:
+        if day:
+                exist_const =  already_cons=Constraint.objects.filter(user=request.user,name=constraint_, day=day, start_time = start_time_, end_time=end_time_)
+                if not exist_const:
+                    const_message =const_message + constraint_
+        if day_2:
+                exist_const =  already_cons=Constraint.objects.filter(user=request.user,name=constraint_2, day=day_2, start_time = start_time_2, end_time=end_time_2)
+                if not exist_const:
+                    const_message =const_message + constraint_
+    new =''
+    constraint_message = ''
+   
+    if const_message!='' or message != '':
         course_ = Allcourse.objects.values('name').distinct()
-        new ="you can not take course "+message +" due to constraint"
-      
-       
-        return render(request, 'user/index.html',context={'cource': course_, "errors":new})
-        
-
+        if message:
+            message ="you can not take course "+message +" due to constraint"
+        if const_message:
+            constraint_message="you can not add that constaint"+const_message +" due to course or constraint"
+        return render(request, 'user/index.html',context={'cource': course_, "errors":new ,'const_errors':constraint_message})
     else:
+        pdb.set_trace
         return  redirect('user:show_timetable')
     
    
@@ -562,25 +612,37 @@ def show_timetable(request):
     grouped_dict = {key: list(group) for key, group in grouped_data}
     #sorted_dict = {key: grouped_dict[key] for key in sorted(grouped_dict.keys())}
 
-    days = {"MON":1, "TUE":2, "WED":3, "THU":4, "FRI":5, "SUN":7}
-    days_2 = {"MON":"MONDAY", "TUE":'TUESDAY', "WED":"WEDNESDAY", "THU":'THURSDAY', "FRI":'FRIDAY',"SUN":'SUNDAY'}
+    days = {"SUN":1, "MON":2, "TUE":3, "WED":4, "THU":5, "FRI":6}
+    days_2 = {1:"SUNDAY", 2:"MONDAY", 3:'TUESDAY', 4:"WEDNESDAY", 5:'THURSDAY', 6:'FRIDAY'}
+    g_d = {i : [] for i in range(1,7)}
     for key in days:
         if key in  grouped_dict:
-            grouped_dict[days[key]] = grouped_dict[key]
-            del grouped_dict[key]
+            g_d[days[key]] = grouped_dict[key]
+        
+ 
+    
+
    
-   
-        else:
-            full_day=days_2[key]
-            obj=Constraint.objects.filter(user=request.user,day=full_day)
-            if obj:
-                obj.delete()
+    for k,v in g_d.items():
+        if not v:
+            empyt_day = days_2[k]
+            const_obj = Constraint.objects.filter(user=request.user,day=empyt_day)
+            dict_list = list(const_obj.values())
+            if dict_list:
+                g_d[k] = [{"const_obj":dict_list}]
+    #print("GD    ",g_d)
+    #pdb.set_trace()
+        # else:
+        #     full_day=days_2[key]
+        #     obj=Constraint.objects.filter(user=request.user,day=full_day)
+        #     if obj:
+        #         obj.delete()
 
     sorted_dict = {}
-    for k in grouped_dict:
+    for k in g_d:
         obj_list = []
         first = True
-        for i in grouped_dict[k]:
+        for i in g_d[k]:
             obj = {}
             for j in i:
                 if j =='const_obj':
@@ -589,10 +651,35 @@ def show_timetable(request):
                             obj_list.append({'const_obj' : l})
                 else:
                     obj[j] = i[j]
-            obj_list.append({'object' : obj})
+            if obj:
+                obj_list.append({'object' : obj})
             first = False
         sorted_dict[k] = sorted(obj_list, key = lambda x:[str(x[y]['start_time']).replace(':','') for y in x])
-   
-  
-    return render(request, 'user/upload_file.html',{'grouped_dict': grouped_dict ,'data':sorted_dict})
+    
+    for key, values in sorted_dict.items():
+        for item in values:
+            if 'object' in item:
+                start_time_str = item['object']['start_time']
+                end_time_str = item['object']['end_time']
+            else:
+                continue
+            start_time_object = datetime.strptime(start_time_str, '%H:%M:%S')
+            end_time_object = datetime.strptime(end_time_str, '%H:%M:%S')
+            hour = start_time_object.hour
+            minute = start_time_object.minute
+
+            # Create a datetime.time object
+            start_time = time(hour, minute)
+
+
+            # Extract the hour and minute components
+            hour = end_time_object.hour
+            minute = end_time_object.minute
+
+            # Create a datetime.time object
+            end_time = time(hour, minute)
+            item['object']['start_time'] = start_time
+            item['object']['end_time'] = end_time
+    print("hussia",sorted_dict)
+    return render(request, 'user/timetable.html',{'grouped_dict': g_d ,'data':sorted_dict})
  

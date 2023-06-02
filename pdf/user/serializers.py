@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from superadmin.models import  Allcourse, Allstudent, Constraint
 from datetime import date,  timedelta,datetime
-
+import pdb
 
 '''
     it is serializer class which convert complex python object into json format
@@ -16,6 +16,8 @@ class UserSerializerForTimeTable(serializers.ModelSerializer):
     def to_representation(self, instance):
         ret = super().to_representation(instance)
         user_ = self.context['request'].user
+       
+     
         DAYS_OF_WEEK = (
             ('MON', 'Monday'),
             ('TUE', 'Tuesday'),
