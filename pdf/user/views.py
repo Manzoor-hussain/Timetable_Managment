@@ -298,7 +298,7 @@ def check_for_day(request,course_,check,dday):
                         if already_obj:
                             continue
                         else:
-                            constraint_obj=Constraint.objects.filter(user=request.user,day=full_day)
+                            constraint_obj=Constraint.objects.filter(user=request.user,day=full_day).order_by('start_time')
                             if constraint_obj:
                 
                                 res=check_already_constraint(request,cours,constraint_obj)
@@ -325,7 +325,7 @@ def check_for_day(request,course_,check,dday):
                         
                     elif course1.end_time <=  cours.start_time >= course2.end_time or course2.end_time <=  cours.start_time  >= course1.end_time:
                        
-                        constraint_obj=Constraint.objects.filter(user=request.user,day=full_day)
+                        constraint_obj=Constraint.objects.filter(user=request.user,day=full_day).order_by('start_time')
                         if constraint_obj:
                             res=check_already_constraint(request,cours,constraint_obj)
                             if res == True:
@@ -359,7 +359,7 @@ def check_for_day(request,course_,check,dday):
                     if already_obj:
                         continue
                     else:
-                        constraint_obj=Constraint.objects.filter(user=request.user,day=full_day)
+                        constraint_obj=Constraint.objects.filter(user=request.user,day=full_day).order_by('start_time')
                        
                         if constraint_obj:
 
