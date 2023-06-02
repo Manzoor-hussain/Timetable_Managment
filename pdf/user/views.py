@@ -6,29 +6,27 @@ from .serializers import  UserSerializerForTimeTable
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth.decorators import login_required
-from django.http import FileResponse
-from django.db.models import Case, When, IntegerField
+
 from django.db.models.functions import ExtractWeekDay
 from django.db.models import Func
 import datetime
 from django.contrib.auth.models import User
-from django.conf import settings
 from superadmin.models import  Allcourse, Allstudent, Constraint
-
 import os
 from  datetime import time
 from itertools import groupby
 from operator import itemgetter
 from collections import OrderedDict
-import pdb
 
 # Create your views here.
 '''
     This function take three argument 
     request course for course object and constraint object 
+   
+    check_already_constraint
  
- '''
-def myconstraint(request,cours,constraint_obj):
+'''
+def check_already_constraint(request,cours,constraint_obj):
     
     if cours:
         for const in constraint_obj:
@@ -40,6 +38,13 @@ def myconstraint(request,cours,constraint_obj):
                 return True
   
    
+
+'''
+    This function take five argument  and check one constraint with
+    already existing constraint and courses.if any available slot for 
+    constraint then constraint object is created. 
+ 
+'''
 def check_constraint_to_add(request,name,day,start_time,end_time):
     days = day[:3]
    
@@ -104,7 +109,7 @@ def check_constraint_to_add(request,name,day,start_time,end_time):
                     for course1, course2 in zip(course_list, course_list[1:]):
                         
                         if course1.end_time <= start_timee_2 < course2.start_time and  course1.end_time <= end_timee_2 <= course2.start_time:
-                            print("created")
+                           
                             already_cons=Constraint.objects.filter(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
                             if already_cons:
                                 continue
@@ -138,13 +143,18 @@ def check_constraint_to_add(request,name,day,start_time,end_time):
 
 
 
-
+'''
+    This function take four  argument  and check the 
+    student taking course with already existing courses
+    and  constraint and given constraint.
+ 
+'''
 
 def check_for_day(request,course_,check,dday):
-    print("uset",request.user)
+   
     day = request.POST.get('day')
     day_2 = request.POST.get('day_2')
-   # course= request.POST.get('courses')
+  
     start_time_ = request.POST['start_time']
     end_time_ = request.POST['end_time']
     constraint_ = request.POST['constraint']
@@ -159,20 +169,19 @@ def check_for_day(request,course_,check,dday):
    
    
     message =''
-    count=0
     for cours in course_:
-        print("inside foor loop day not match")
+       
         already_obj = Allstudent.objects.filter(user=request.user,title=check)
         allstudent=Allstudent.objects.filter(user=request.user) 
         timetable = Allcourse.objects.filter(allstudent__user=request.user,day=cours.day)
         days_2 = {"MON":"MONDAY", "TUE":'TUESDAY', "WED":"WEDNESDAY", "THU":'THURSDAY', "FRI":'FRIDAY',"SUN":'SUNDAY'}
         full_day=''
        
-        count=count+1
+      
         if cours.day in days_2:
             full_day = days_2[cours.day]
 
-        print("how many tim",len(course_),cours.day,count)
+       
         if not timetable:
             
             if already_obj:
@@ -180,13 +189,13 @@ def check_for_day(request,course_,check,dday):
             else:
                 constraint_obj=Constraint.objects.filter(user=request.user,day=full_day)
               
-                print("at first")
+              
                
                 if constraint_obj:
-                    print("constriant",constraint_obj)
+                  
                 
-                    res=myconstraint(request,cours,constraint_obj)
-                    print("constaint resuls",res)
+                    res=check_already_constraint(request,cours,constraint_obj)
+                   
                    
 
                     if res == True:
@@ -213,12 +222,7 @@ def check_for_day(request,course_,check,dday):
                     else:
                         continue
                         message1="constraint"
-
-
-
                 else:
-                  
-                    print("khan")
                    
                     Allstudent.objects.create(user=request.user, course=cours, title=check)
 
@@ -238,7 +242,7 @@ def check_for_day(request,course_,check,dday):
                             check_constraint_to_add(request,constraint_2,days_22,start_time_2, end_time_2)
         
                     
-                    print("not time table")
+                  
                     return True
         else:
            
@@ -248,7 +252,7 @@ def check_for_day(request,course_,check,dday):
                 for course1, course2 in zip(course_list, course_list[1:]):
                     
                     if course1.end_time <= cours.start_time < course2.start_time and  course1.end_time <= cours.end_time <= course2.start_time:
-                        print("created object betwnn")
+                      
                         already_obj = Allstudent.objects.filter(user=request.user,title=check)
                         if already_obj:
                             continue
@@ -256,7 +260,7 @@ def check_for_day(request,course_,check,dday):
                             constraint_obj=Constraint.objects.filter(user=request.user,day=full_day)
                             if constraint_obj:
                 
-                                res=myconstraint(request,cours,constraint_obj)
+                                res=check_already_constraint(request,cours,constraint_obj)
                                 if res == True:
                                     Allstudent.objects.create(user=request.user, course=cours, title=check)
                                     if dday == 1:
@@ -277,12 +281,12 @@ def check_for_day(request,course_,check,dday):
                                 else:
                                     message1="constraint"
 
-                        #myob = Constraint.objects.create(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
+                        
                     elif course1.end_time <=  cours.start_time >= course2.end_time or course2.end_time <=  cours.start_time  >= course1.end_time:
-                        print("created object at the end")
+                       
                         constraint_obj=Constraint.objects.filter(user=request.user,day=full_day)
                         if constraint_obj:
-                            res=myconstraint(request,cours,constraint_obj)
+                            res=check_already_constraint(request,cours,constraint_obj)
                             if res == True:
                                 Allstudent.objects.create(user=request.user, course=cours, title=check)
                                 if dday == 1:
@@ -305,12 +309,10 @@ def check_for_day(request,course_,check,dday):
                 
             else:    
                 timeta_ = timetable[0]
-                if count == 3:
-                   pass
+             
               
                 if cours.start_time <= timeta_.start_time <= cours.end_time or  cours.start_time <= timeta_.end_time <= cours.end_time:
-                    
-                    print("match continur")
+
                     continue
                 else:
                     if already_obj:
@@ -321,7 +323,7 @@ def check_for_day(request,course_,check,dday):
                         if constraint_obj:
 
             
-                            res=myconstraint(request,cours,constraint_obj)
+                            res=check_already_constraint(request,cours,constraint_obj)
                             if res == True:
                                 Allstudent.objects.create(user=request.user, course=cours, title=check)
                                 if dday == 1:
@@ -359,7 +361,7 @@ def check_for_day(request,course_,check,dday):
                                 elif dday ==2:
                                     check_constraint_to_add(request,constraint_2,days_22,start_time_2, end_time_2)
                             
-                            print("not time  under 495 table")
+                          
                             return True
 
 
@@ -391,16 +393,24 @@ def get_index_page(request):
 @login_required
 @api_view(['POST','GET'])
 def select_courses(request): 
+    '''
+     below code for get  request and render the index page
+    '''
 
     if request.method =='GET':
         course_ = Allcourse.objects.values('name').distinct()
         return render(request, 'user/index.html',context={'cource': course_})
     
 
-  
+   
+
+
+    '''
+     below code taking post request which have constraint and 
+     course object which user is selecting
+    '''
     data=request.data
     day = request.POST.get('day')
-    day_2 = request.POST.get('day_2')
     checked_checkboxes_courses = request.POST.getlist('courses')
     start_time_ = request.POST['start_time']
     end_time_ = request.POST['end_time']
@@ -408,7 +418,7 @@ def select_courses(request):
     
     days=day.upper()
     days_=days[:3]
-   
+    day_2 = request.POST.get('day_2')
     start_time_2 = request.POST['start_time_2']
     end_time_2 = request.POST['end_time_2']
     constraint_2 = request.POST['constraint_2']
@@ -416,42 +426,47 @@ def select_courses(request):
        
         
     message=''
-
+    
+    '''
+     below code  for loop executing for courses which user selecting one and more 
+     cousrses .for loop take course one by one course.
+    '''
     for check in checked_checkboxes_courses:  
         already_ = Allstudent.objects.filter(user=request.user,title=check)
         if already_:
             continue
         else:
+            '''
+            below code  for if user not selecting any constraint
+            '''
             if not day:
-                print("empty")
+             
                 course_= Allcourse.objects.filter(name=check)
                 if course_:
                     res=check_for_day(request,course_,check,0)
                     if res == False:
                         message1 = f"{check}"
-                    
                         message = message + message1 
                 else:
                     message1=f"{check}"
                     message=message+ message1                      
-                    
-                    """THis is code for when User have no constrint"""    
+                           
             elif day:
-                print("day hai")
+             
                 course_= Allcourse.objects.filter(name=check ,day=days_)
                 if not course_:
                     course_= Allcourse.objects.filter(name=check).exclude(day=days_)
             
                 if course_.exists():
-                    print("exist")
+                   
                     course_ = course_.last()                
                     start_timee = time.fromisoformat(start_time_)
                     end_timeee = time.fromisoformat(end_time_)
-                    print("here")
+                   
                   
                     if course_.start_time <= start_timee <= course_.end_time or course_.start_time <= end_timeee <= course_.end_time:
                         if day_2:
-                            print("days2")
+                          
                             days_22=day_2.upper()
                             days_2=days_22[:3]
                             course_= Allcourse.objects.filter(name=check ,day=days_2).exclude(day=days_)
@@ -462,21 +477,18 @@ def select_courses(request):
                                     if cours.start_time <= start_timee_2 <= cours.end_time or cours.start_time <= end_timee_2 <= cours.end_time:
                                         course_= Allcourse.objects.filter(name=check).exclude(day=days_).exclude(day=days_2)
                                         if course_:
-                                            print("check call for day2")
                                             check_for_day(request,course_,check,2)
                                         else: 
                                             message ="constrint"
-                                            print("no objects")               
+                                                       
                                         
                             else:
                                 course_= Allcourse.objects.filter(name=check).exclude(day=days_).exclude(day=days_2)
     
                                 if course_:
-                                    print("check For day2")
                                     res =check_for_day(request,course_,check ,2)
                                     if res == False:
                                         message1 = f"{check}"
-                                    
                                         message = message + message1   
                                 else:
                                     message1=f"{check}"
@@ -487,31 +499,23 @@ def select_courses(request):
                                     #first day and check another 
                                 course_= Allcourse.objects.filter(name=check).exclude(day=days_)
                                 if course_:
-                                    print("check for day1")
                                     res =check_for_day(request,course_,check,1)
                                     if res == False:
                                         message1 = f"{check}"
-                                    
                                         message = message + message1   
                                 else:
                                     message1=f"{check}"
                                     message=message+ message1
                                  
                             except Exception as e :
-                                print("exception",e)
-                           
                                 pass
 
                     else:
                         try:
-
-                            print("time condition false bach gea constr day1")
                             course_= Allcourse.objects.filter(name=check).exclude(day=days_)
                             if course_:
-                                print("check for day 1")
                                 check_for_day(request,course_,check,1)              
                         except Exception as e:
-                            print("exceptio All student",e)
                             pass
                        
                 else:
@@ -519,13 +523,13 @@ def select_courses(request):
                     message1=f"{check}"
                     
                     message = message +message1
-                    print("final")
+                 
                 
     
     if message:
         course_ = Allcourse.objects.values('name').distinct()
         new ="you can not take course "+message +" due to constraint"
-        print("course last",course_)
+      
        
         return render(request, 'user/index.html',context={'cource': course_, "errors":new})
         
@@ -547,8 +551,6 @@ def show_timetable(request):
     allstudent=Allstudent.objects.filter(user=request.user)    
     timetable = Allcourse.objects.filter(allstudent__user=request.user).order_by('start_time')
     serializer_data = UserSerializerForTimeTable(timetable,many=True ,context={'request': request})
-
-
 
     # Sort the data by 'day' field
     sorted_data = sorted(serializer_data.data, key=itemgetter('day'))

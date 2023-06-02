@@ -2,6 +2,12 @@ from rest_framework import serializers
 from superadmin.models import  Allcourse, Allstudent, Constraint
 from datetime import date,  timedelta,datetime
 
+
+'''
+    it is serializer class which convert complex python object into json format
+    it is also used for validation purpose.
+'''
+
 class UserSerializerForTimeTable(serializers.ModelSerializer):
     class Meta:
         model = Allcourse
@@ -10,9 +16,6 @@ class UserSerializerForTimeTable(serializers.ModelSerializer):
     def to_representation(self, instance):
         ret = super().to_representation(instance)
         user_ = self.context['request'].user
-        is_active = False
-        lot_size = 0
-        user_instrument = ''
         DAYS_OF_WEEK = (
             ('MON', 'Monday'),
             ('TUE', 'Tuesday'),
@@ -29,12 +32,6 @@ class UserSerializerForTimeTable(serializers.ModelSerializer):
               break
        
         day_value = day_value.upper()
-       
-        const_name = ''
-        start_time_con = ''
-        end_time_con = ''
-        cons_day = ''
-        ubi = Constraint.objects.filter(user=user_ ,day=day_value).last()
         const_obj=''
         const_obj = Constraint.objects.filter(user=user_, day=day_value).values('user','day','name','start_time','end_time').distinct()
 

@@ -6,7 +6,8 @@ Student can select the available courses with their contraint.
 
 
 create virtual env:
-
+mkdir timetable 
+cd  timetable
 python3 -m venv myenv
 source myenv/bin/activate
 
@@ -16,6 +17,7 @@ pip install whitenoise
 
 
 go to the directory:
-cd pdf
+cd timetable/pdf
 run the command:
+
 python manage.py runserver
