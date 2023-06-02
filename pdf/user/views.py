@@ -31,13 +31,34 @@ import pdb
 def check_already_constraint(request,cours,constraint_obj):
     
     if cours:
-        for const in constraint_obj:
-            if const.start_time <= cours.start_time <= const.end_time or const.start_time <= cours.end_time <= const.end_time:
-        
-                return False
-            else:
+        if len(constraint_obj) >=2:
+            course_list = list(constraint_obj)
+            time_differences = []
+            for constraint1, constraint2 in zip(course_list, course_list[1:]):   
+                   
+                    if constraint1.end_time <= cours.start_time <= constraint2.start_time and  constraint1.end_time <= cours.end_time <= constraint2.start_time:
+                        return True
+                      
+                    elif constraint1.start_time >= cours.end_time <= constraint1.end_time:
+                        return True
+                    
+                    elif len(constraint_obj) ==2:
+                        if constraint2.end_time <= cours.start_time >= constraint2.start_time:
+                            return True
+
+                    
+                    
+
+            
+            return False      
+
+        elif len(constraint_obj) == 1:
+            for const in constraint_obj:
                
-                return True
+                if const.start_time <= cours.start_time <= const.end_time or const.start_time <= cours.end_time <= const.end_time:
+                    return False
+                else:
+                    return True
   
    
 
@@ -187,7 +208,7 @@ def check_for_day(request,course_,check,dday):
       
         if cours.day in days_2:
             full_day = days_2[cours.day]
-
+       
        
         if not timetable:
             
@@ -405,7 +426,7 @@ def select_courses(request):
     '''
 
     if request.method =='GET':
-        pdb.set_trace
+       
         course_ = Allcourse.objects.values('name').distinct()
         return render(request, 'user/index.html',context={'cource': course_})
     
@@ -575,7 +596,7 @@ def select_courses(request):
                     const_message =const_message + constraint_
     new =''
     constraint_message = ''
-   
+  
     if const_message!='' or message != '':
         course_ = Allcourse.objects.values('name').distinct()
         if message:
@@ -584,7 +605,8 @@ def select_courses(request):
             constraint_message="you can not add that constaint"+const_message +" due to course or constraint"
         return render(request, 'user/index.html',context={'cource': course_, "errors":new ,'const_errors':constraint_message})
     else:
-        pdb.set_trace
+        print("hussain")
+       
         return  redirect('user:show_timetable')
     
    
@@ -680,6 +702,6 @@ def show_timetable(request):
             end_time = time(hour, minute)
             item['object']['start_time'] = start_time
             item['object']['end_time'] = end_time
-    print("hussia",sorted_dict)
+  
     return render(request, 'user/timetable.html',{'grouped_dict': g_d ,'data':sorted_dict})
  
