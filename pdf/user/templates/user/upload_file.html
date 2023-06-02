@@ -103,18 +103,36 @@
               {% if 'const_obj' in item %}
               <td>
                
-                <span class="bg-pink padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16  xs-font-size13">{{ item.const_obj.name}}</span>
+                <span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16  xs-font-size13">{{ item.const_obj.name}}</span>
               
                 <div class="margin-10px-top font-size14">{{ item.const_obj.start_time}}-{{ item.const_obj.end_time}}</div>
-                <div class="font-size13 text-light-gray">COnst</div>
+                
              </td>
              {%endif%}
           
              {% if 'object' in item %}
               <td>
-                <span class="bg-sky padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16  xs-font-size13">{{ item.object.name }}</span>
+                {% if item.object.name  == "Machine Learning"%}
+                <span class="bg-purple padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16  xs-font-size13">{{item.object.name }}</span>
+              
+                {% elif item.object.name == "Parrallel computing" %}
+                <span class="bg-yellow padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16  xs-font-size13">{{item.object.name }}</span>
+                {% elif item.object.name  == "Advanced Algorithm" %}
+                <span class="bg-lightred padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16  xs-font-size13">{{item.object.name }}</span>
+                {% elif item.object.name  == "Compilation" %}
+                <span  style='background-color: gray;' class="padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16  xs-font-size13">{{item.object.name }}</span>
+               
+                {% elif item.object.name  == "Compilation" %}
+                <span  style='background-color: gray;' class="padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16  xs-font-size13">{{item.object.name }}</span>
+               
+                {% elif item.object.name  == "Game Development" %}
+                <span  style='background-color: green;' class="padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16  xs-font-size13">{{item.object.name }}</span>
+                {%else %}
+                <span class="bg-pink padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16  xs-font-size13">{{item.object.name }}</span>
+                {%endif%}
+                
                 <div class="margin-10px-top font-size14">{{item.object.start_time}}-{{item.object.end_time}}</div>
-                <div class="font-size13 text-light-gray">Object</div>
+               
              </td>
 
              {% endif %}
@@ -138,7 +156,7 @@
 
 
 
-            {% for day, items in grouped_dict.items %}
+            <!-- {% for day, items in grouped_dict.items %}
                 <tr>
                   {% if day == 'MON'%}
                   <th class="text-uppercase align-middle">Monday</th>
@@ -196,7 +214,7 @@
             {% endfor %}
              
                   
-     
+      -->
         
                  
              

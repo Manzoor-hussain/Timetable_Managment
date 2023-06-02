@@ -616,12 +616,12 @@ def show_timetable(request):
             grouped_dict[days[key]] = grouped_dict[key]
             del grouped_dict[key]
    
-    # pdb.set_trace()
-        # else:
-        #     full_day=days_2[key]
-        #     obj=Constraint.objects.filter(user=request.user,day=full_day)
-        #     if obj:
-        #         obj.delete()
+   
+        else:
+            full_day=days_2[key]
+            obj=Constraint.objects.filter(user=request.user,day=full_day)
+            if obj:
+                obj.delete()
 
   
     # for day, group in grouped_dict.items():
@@ -653,92 +653,7 @@ def show_timetable(request):
             first = False
         sorted_dict[k] = sorted(obj_list, key = lambda x:[str(x[y]['start_time']).replace(':','') for y in x])
    
-    data=  {1: [{'const_obj': {'id': 69,
-    'user_id': 10,
-    'day': 'MONDAY',
-    'start_time': datetime.time(9, 0),
-    'end_time': datetime.time(11, 50),
-    'name': 'Shopping'}},
-  {'object': {'id': 14,
-    'day': 'MON',
-    'name': 'Computer Science Project',
-    'studentcount': 30,
-    'start_time': '13:00:00',
-    'end_time': '16:50:00',
-    'user': [1]}}],
- 2: [{'const_obj': {'id': 74,
-    'user_id': 10,
-    'day': 'TUESDAY',
-    'start_time': datetime.time(7, 0),
-    'end_time': datetime.time(8, 0),
-    'name': 'test'}},
-  {'object': {'id': 12,
-    'day': 'TUE',
-    'name': 'Parrallel computing',
-    'studentcount': 35,
-    'start_time': '08:00:00',
-    'end_time': '12:50:00',
-    'user': []}},
-  {'object': {'id': 1,
-    'day': 'TUE',
-    'name': 'Advanced Algorithm',
-    'studentcount': 45,
-    'start_time': '13:00:00',
-    'end_time': '16:50:00',
-    'user': []}},
-  {'const_obj': {'id': 75,
-    'user_id': 10,
-    'day': 'TUESDAY',
-    'start_time': datetime.time(17, 0),
-    'end_time': datetime.time(18, 0),
-    'name': 'Muneeb'}}],
- 3: [{'object': {'id': 7,
-    'day': 'WED',
-    'name': 'Machine Learning',
-    'studentcount': 3,
-    'start_time': '08:00:00',
-    'end_time': '12:50:00',
-    'user': []}},
-  {'const_obj': {'id': 73,
-    'user_id': 10,
-    'day': 'WEDNESDAY',
-    'start_time': datetime.time(13, 0),
-    'end_time': datetime.time(14, 0),
-    'name': 'Practive'}},
-  {'object': {'id': 19,
-    'day': 'WED',
-    'name': 'Databases',
-    'studentcount': 40,
-    'start_time': '14:00:00',
-    'end_time': '16:50:00',
-    'user': [1]}}],
- 4: [{'object': {'id': 5,
-    'day': 'THU',
-    'name': 'Compilation',
-    'studentcount': 2,
-    'start_time': '08:00:00',
-    'end_time': '11:50:00',
-    'user': []}},
-  {'const_obj': {'id': 68,
-    'user_id': 10,
-    'day': 'THURSDAY',
-    'start_time': datetime.time(14, 0),
-    'end_time': datetime.time(16, 0),
-    'name': 'Playing'}}],
- 7: [{'object': {'id': 18,
-    'day': 'SUN',
-    'name': '.Net Programming',
-    'studentcount': 36,
-    'start_time': '09:00:00',
-    'end_time': '12:50:00',
-    'user': [1]}},
-  {'object': {'id': 16,
-    'day': 'SUN',
-    'name': 'Game Development',
-    'studentcount': 14,
-    'start_time': '14:00:00',
-    'end_time': '16:50:00',
-    'user': [1]}}]}
+   
 
     
    
