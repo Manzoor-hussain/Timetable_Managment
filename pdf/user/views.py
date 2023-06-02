@@ -31,9 +31,22 @@ import pdb
 def check_already_constraint(request,cours,constraint_obj):
     
     if cours:
+        #orted_time_slots = sorted(course_list, key=lambda slot: slot['start_time'])
+
         if len(constraint_obj) >=2:
+            print("list",constraint_obj)
             course_list = list(constraint_obj)
             time_differences = []
+           
+            first=constraint_obj.first()
+            last = constraint_obj.last()
+            if cours.start_time >=last.end_time:
+                return True
+            elif cours.end_time<=first.start_time:
+                return True
+                
+
+
             for constraint1, constraint2 in zip(course_list, course_list[1:]):   
                    
                     if constraint1.end_time <= cours.start_time <= constraint2.start_time and  constraint1.end_time <= cours.end_time <= constraint2.start_time:
@@ -215,7 +228,7 @@ def check_for_day(request,course_,check,dday):
             if already_obj:
                 continue
             else:
-                constraint_obj=Constraint.objects.filter(user=request.user,day=full_day)
+                constraint_obj=Constraint.objects.filter(user=request.user,day=full_day).order_by('start_time')
               
               
                
