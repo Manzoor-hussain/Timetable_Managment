@@ -256,8 +256,9 @@ def check_constraint_to_add(request,name,day,start_time,end_time):
 
 
 def check_courses_to_add(request,cours,title):
-    Allstudent.objects.create(user=request.user, course=cours, title=title)
-    pdb.set_trace
+   
+    pdb.set_trace()
+    # Allstudent.objects.create(user=request.user, course=cours, title=title)
 
     # constraint_obj=Constraint.objects.filter(user=request.user,day=day)
     # allstudent=Allstudent.objects.filter(user=request.user) 
@@ -664,15 +665,13 @@ def select_courses(request):
             exist_const= Constraint.objects.filter(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
             if exist_const.exists():
                 pass
-            else:
-                const_message =const_message + constraint_
+           
         if day_2:
             check_constraint_to_add(request,constraint_2,days_2,start_time_2,end_time_2)
             exist_const = Constraint.objects.filter(user=request.user,name=constraint_2, day=days_2, start_time = start_time_2, end_time=end_time_2)
             if exist_const.exists():
                 pass
-            else:
-                const_message =const_message + constraint_
+           
 
 
     else:  
@@ -697,17 +696,14 @@ def select_courses(request):
                         res=check_for_day(request,course_,check,0)
                         allstudent=Allstudent.objects.filter(user=request.user,title=check) 
                         
-                        # if not allstudent:
-                           
-                        #     message1 = f"{check}"
-                        #     message = message + message1 
+                      
 
-                        if res == False:
-                            message1 = f"{check}"
-                            message = message + message1 
-                    else:
-                        message1=f"{check}"
-                        message=message+ message1                      
+                    #     if res == False:
+                    #         message1 = f"{check}"
+                    #         message = message + message1 
+                    # else:
+                    #     message1=f"{check}"
+                    #     message=message+ message1                      
                             
                 elif day:
                     
@@ -741,9 +737,13 @@ def select_courses(request):
                                         if cours.start_time <= start_timee_2 <= cours.end_time or cours.start_time <= end_timee_2 <= cours.end_time:
                                             course_= Allcourse.objects.filter(name=check).exclude(day=days_).exclude(day=days_2)
                                             if course_:
-                                                check_for_day(request,course_,check,2)
-                                            else: 
-                                                message ="constrint"
+                                                res =check_for_day(request,course_,check ,2)
+                                            #     if res == False:
+                                            #         message1 = f"{check}"
+                                            #         message = message + message1   
+                                            # else:
+                                            #     message1=f"{check}"
+                                            #     message=message+ message1
                                                         
                                             
                                 else:
@@ -751,12 +751,12 @@ def select_courses(request):
         
                                     if course_:
                                         res =check_for_day(request,course_,check ,2)
-                                        if res == False:
-                                            message1 = f"{check}"
-                                            message = message + message1   
-                                    else:
-                                        message1=f"{check}"
-                                        message=message+ message1
+                                    #     if res == False:
+                                    #         message1 = f"{check}"
+                                    #         message = message + message1   
+                                    # else:
+                                    #     message1=f"{check}"
+                                    #     message=message+ message1
 
                             else:
                                 try:
@@ -764,12 +764,12 @@ def select_courses(request):
                                     course_= Allcourse.objects.filter(name=check).exclude(day=days_)
                                     if course_:
                                         res =check_for_day(request,course_,check,1)
-                                        if res == False:
-                                            message1 = f"{check}"
-                                            message = message + message1   
-                                    else:
-                                        message1=f"{check}"
-                                        message=message+ message1
+                                    #     if res == False:
+                                    #         message1 = f"{check}"
+                                    #         message = message + message1   
+                                    # else:
+                                    #     message1=f"{check}"
+                                    #     message=message+ message1
                                     
                                 except Exception as e :
                                     pass
@@ -792,24 +792,38 @@ def select_courses(request):
     '''
         below code execute w
     '''
+   
+    if day:
+            day=day.upper()
+            exist_const=Constraint.objects.filter(user=request.user,name=constraint_, day=day, start_time = start_time_, end_time=end_time_)
+            if not exist_const:
+                const_message =const_message+""+constraint_
+    if day_2:
+            day_2= day_2.upper()
+            exist_const=Constraint.objects.filter(user=request.user,name=constraint_2, day=day_2, start_time = start_time_2, end_time=end_time_2)
+            if not exist_const:
+                const_message =const_message+" "+constraint_2
     if checked_checkboxes_courses:
-        if day:
-                exist_const =  already_cons=Constraint.objects.filter(user=request.user,name=constraint_, day=day, start_time = start_time_, end_time=end_time_)
-                if not exist_const:
-                    const_message =const_message + constraint_
-        if day_2:
-                exist_const =  already_cons=Constraint.objects.filter(user=request.user,name=constraint_2, day=day_2, start_time = start_time_2, end_time=end_time_2)
-                if not exist_const:
-                    const_message =const_message + constraint_
+        for check in checked_checkboxes_courses:
+            stu=Allstudent.objects.filter(user=request.user,title=check)
+            if not stu:
+                message1=f"{check} "
+                message= message + message1
+            else:
+                continue
+
     new =''
     constraint_message = ''
    
     if const_message!='' or message !='':
         course_ = Allcourse.objects.values('name').distinct()
         if message:
-            new ="you can not take course "+message+" due to constraint"
+   
+            new =f'you can\'t add the course "{message}", there is already a course/constraint at the same time'
         if const_message:
-            constraint_message="you can not add that constaint "+const_message+" due to course or constraint"
+            constraint_message = f'you can\'t add the course "{const_message}", there is already a course/constraint at the same time'
+
+            
         return render(request, 'user/index.html',context={'cource': course_, "errors":new ,'const_errors':constraint_message})
     else:
         print("hussain")
