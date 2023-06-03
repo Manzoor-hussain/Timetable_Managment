@@ -87,95 +87,129 @@ def check_constraint_to_add(request,name,day,start_time,end_time):
   
    
     constraint_obj=Constraint.objects.filter(user=request.user,day=day)
+    allstudent=Allstudent.objects.filter(user=request.user) 
+    student = Allcourse.objects.filter(allstudent__user=request.user,day=days)
+    student_list=list(student)
+    cons_list =list(constraint_obj)
+    appended_list = student_list + cons_list
+    sorted_list = sorted(appended_list, key=lambda x: x.start_time)
+    first=sorted_list[0]
+    last=sorted_list[len(sorted_list)-1]
     start_timee_2 = time.fromisoformat(start_time)
     end_timee_2 = time.fromisoformat(end_time)
-
-    if constraint_obj:
-       
-        for const in constraint_obj:
-          
-          
-            if const.start_time <= start_timee_2 <= const.end_time or const.start_time <= end_timee_2 <= const.end_time:
-                print("contine")
-                continue
-            else:
-                print("else")
-                allstudent=Allstudent.objects.filter(user=request.user) 
-                student = Allcourse.objects.filter(allstudent__user=request.user,day=days)
-                if student:
-                    for stu in student:
-                        if stu.start_time <= start_timee_2 <=stu.end_time or  stu.start_time <= end_timee_2 <=stu.end_time:
-                            continue
-                        else:
-                            already_cons=Constraint.objects.filter(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
-                            if already_cons:
-                                continue
-                            else:
-                                myob = Constraint.objects.create(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
-                            break
-                else:
-                    already_cons=Constraint.objects.filter(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
-                    if already_cons:
-                        continue
-                    else:
-                        myob = Constraint.objects.create(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
-                    break
-    else:
-        
-        allstudent=Allstudent.objects.filter(user=request.user) 
-        student = Allcourse.objects.filter(allstudent__user=request.user,day=days)
-      
-        if student:
-            if len(student) == 1:
-
-                for stu in student:
-                    if stu.start_time <= start_timee_2 <=stu.end_time or  stu.start_time <= end_timee_2 <=stu.end_time:
-                        continue
-                    else:
-                        already_cons=Constraint.objects.filter(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
-                        if already_cons:
-                            continue
-                        else:
-                            myob = Constraint.objects.create(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
-                        break
+    if start_timee_2 >=last.end_time:
+        already_cons=Constraint.objects.filter(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
+        if already_cons:
+            return False
+        else:
+            Constraint.objects.create(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
+            return True
+    elif end_timee_2<=first.start_time:
+        already_cons=Constraint.objects.filter(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
+        if already_cons:
+            return False
+        else:
+            Constraint.objects.create(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
+            return True
+    
+    for constraint1, constraint2 in zip(sorted_list, sorted_list[1:]):   
             
-            elif len(student) >= 2:
-               # res=check_for_day(request,course_,check,0)
-
-            
-                course_list = list(student)
+            if constraint1.end_time <= start_timee_2 <= constraint2.start_time and  constraint1.end_time <= end_timee_2 <= constraint2.start_time:
+                return True
                 
-                for cours in student:
+ 
+    return False
 
-                    time_differences = []
-                    for course1, course2 in zip(course_list, course_list[1:]):
+    
+    # start_timee_2 = time.fromisoformat(start_time)
+    # end_timee_2 = time.fromisoformat(end_time)
+
+    # if constraint_obj:
+       
+    #     for const in constraint_obj:
+          
+          
+    #         if const.start_time <= start_timee_2 <= const.end_time or const.start_time <= end_timee_2 <= const.end_time:
+    #             print("contine")
+    #             continue
+    #         else:
+    #             print("else")
+    #             allstudent=Allstudent.objects.filter(user=request.user) 
+    #             student = Allcourse.objects.filter(allstudent__user=request.user,day=days)
+    #             if student:
+    #                 for stu in student:
+    #                     if stu.start_time <= start_timee_2 <=stu.end_time or  stu.start_time <= end_timee_2 <=stu.end_time:
+    #                         continue
+    #                     else:
+    #                         already_cons=Constraint.objects.filter(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
+    #                         if already_cons:
+    #                             continue
+    #                         else:
+    #                             myob = Constraint.objects.create(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
+    #                         break
+    #             else:
+    #                 already_cons=Constraint.objects.filter(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
+    #                 if already_cons:
+    #                     continue
+    #                 else:
+    #                     myob = Constraint.objects.create(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
+    #                 break
+    # else:
+        
+    #     allstudent=Allstudent.objects.filter(user=request.user) 
+    #     student = Allcourse.objects.filter(allstudent__user=request.user,day=days)
+      
+    #     if student:
+    #         if len(student) == 1:
+
+    #             for stu in student:
+    #                 if stu.start_time <= start_timee_2 <=stu.end_time or  stu.start_time <= end_timee_2 <=stu.end_time:
+    #                     continue
+    #                 else:
+    #                     already_cons=Constraint.objects.filter(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
+    #                     if already_cons:
+    #                         continue
+    #                     else:
+    #                         myob = Constraint.objects.create(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
+    #                     break
+            
+    #         elif len(student) >= 2:
+    #            # res=check_for_day(request,course_,check,0)
+
+            
+    #             course_list = list(student)
+                
+    #             for cours in student:
+
+    #                 time_differences = []
+    #                 for course1, course2 in zip(course_list, course_list[1:]):
                         
-                        if course1.end_time <= start_timee_2 < course2.start_time and  course1.end_time <= end_timee_2 <= course2.start_time:
+    #                     if course1.end_time <= start_timee_2 < course2.start_time and  course1.end_time <= end_timee_2 <= course2.start_time:
                            
-                            already_cons=Constraint.objects.filter(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
-                            if already_cons:
-                                continue
-                            else:
-                                myob = Constraint.objects.create(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
-                            break
-                        elif course1.end_time <= start_timee_2 >= course2.end_time or course2.end_time <= start_timee_2 >= course1.end_time:
-                            already_cons=Constraint.objects.filter(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
-                            if already_cons:
-                                continue
-                            else:
-                                myob = Constraint.objects.create(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
-                            break
+    #                         already_cons=Constraint.objects.filter(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
+    #                         if already_cons:
+    #                             continue
+    #                         else:
+    #                             myob = Constraint.objects.create(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
+    #                         break
+    #                     elif course1.end_time <= start_timee_2 >= course2.end_time or course2.end_time <= start_timee_2 >= course1.end_time:
+    #                         already_cons=Constraint.objects.filter(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
+    #                         if already_cons:
+    #                             continue
+    #                         else:
+    #                             myob = Constraint.objects.create(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
+    #                         break
                            
                             
                                 
                 
-        else:
+    #     else:
 
-            already_cons=Constraint.objects.filter(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
-            if already_cons:
-                pass
-            else:
-                myob = Constraint.objects.create(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
+    #         already_cons=Constraint.objects.filter(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
+    #         if already_cons:
+    #             pass
+    #         else:
+    #             myob = Constraint.objects.create(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
            
             
 
