@@ -29,6 +29,7 @@ import pdb
  
 '''
 def check_already_constraint(request,cours,constraint_obj):
+
     
     if cours:
         #orted_time_slots = sorted(course_list, key=lambda slot: slot['start_time'])
@@ -52,12 +53,12 @@ def check_already_constraint(request,cours,constraint_obj):
                     if constraint1.end_time <= cours.start_time <= constraint2.start_time and  constraint1.end_time <= cours.end_time <= constraint2.start_time:
                         return True
                       
-                    elif constraint1.start_time >= cours.end_time <= constraint1.end_time:
-                        return True
+                    # elif constraint1.start_time >= cours.end_time <= constraint1.end_time:
+                    #     return True
                     
-                    elif len(constraint_obj) ==2:
-                        if constraint2.end_time <= cours.start_time >= constraint2.start_time:
-                            return True
+                    # elif len(constraint_obj) ==2:
+                    #     if constraint2.end_time <= cours.start_time >= constraint2.start_time:
+                    #         return True
 
                     
                     
@@ -450,6 +451,7 @@ def select_courses(request):
     '''
      below code taking post request which have constraint and 
      course object which user is selecting
+
     '''
     data=request.data
     day = request.POST.get('day')
@@ -469,6 +471,13 @@ def select_courses(request):
         
     message=''
     const_message =''
+    
+    if checked_checkboxes_courses == [] and day == '' and day_2 =='':
+        course_ = Allcourse.objects.values('name').distinct()
+        messageee ="You did not select any course and constraint"
+        return render(request, 'user/index.html',context={'cource': course_ ,"errors":messageee})
+   
+
     
     '''
      below code  for loop executing for courses which user selecting one and more 
