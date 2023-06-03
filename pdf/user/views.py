@@ -821,7 +821,7 @@ def select_courses(request):
    
             new =f'you can\'t add the course "{message}", there is already a course/constraint at the same time'
         if const_message:
-            constraint_message = f'you can\'t add the course "{const_message}", there is already a course/constraint at the same time'
+            constraint_message = f'you can\'t add the constraint "{const_message}", a course/constraint already exists at the same time'
 
             
         return render(request, 'user/index.html',context={'cource': course_, "errors":new ,'const_errors':constraint_message})
