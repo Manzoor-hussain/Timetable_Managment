@@ -255,87 +255,85 @@ def check_constraint_to_add(request,name,day,start_time,end_time):
                 
 
 
-def check_courses_to_add(request,name,day,start_time,end_time):
-    days = day[:3]
-    start_timee_2 = time.fromisoformat(start_time)
-    end_timee_2 = time.fromisoformat(end_time)
-  
-   
-    constraint_obj=Constraint.objects.filter(user=request.user,day=day)
-    allstudent=Allstudent.objects.filter(user=request.user) 
-    student = Allcourse.objects.filter(allstudent__user=request.user,day=days)
-    if not constraint_obj and not student:
-        already_cons=Constraint.objects.filter(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
-        if already_cons:
-            return False
-        else:
-            Constraint.objects.create(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
-            return True
+def check_courses_to_add(request,cours,title):
+    Allstudent.objects.create(user=request.user, course=cours, title=title)
+    pdb.set_trace
+
+    # constraint_obj=Constraint.objects.filter(user=request.user,day=day)
+    # allstudent=Allstudent.objects.filter(user=request.user) 
+    # student = Allcourse.objects.filter(allstudent__user=request.user,day=days)
+    # if not constraint_obj and not student:
+    #     already_cons=Constraint.objects.filter(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
+    #     if already_cons:
+    #         return False
+    #     else:
+    #         Constraint.objects.create(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
+    #         return True
     
-    elif  constraint_obj and student:
-        student_list=list(student)
-        cons_list =list(constraint_obj)
-        appended_list = student_list + cons_list
-        sorted_list = sorted(appended_list, key=lambda x: x.start_time)
-        first=sorted_list[0]
-        last=sorted_list[len(sorted_list)-1]
-        start_timee_2 = time.fromisoformat(start_time)
-        end_timee_2 = time.fromisoformat(end_time)
-        if start_timee_2 >=last.end_time:
-            already_cons=Constraint.objects.filter(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
-            if already_cons:
-                return False
-            else:
-                Constraint.objects.create(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
-                return True
-        elif end_timee_2<=first.start_time:
-            already_cons=Constraint.objects.filter(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
-            if already_cons:
-                return False
-            else:
-                Constraint.objects.create(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
-                return True
+    # elif  constraint_obj and student:
+    #     student_list=list(student)
+    #     cons_list =list(constraint_obj)
+    #     appended_list = student_list + cons_list
+    #     sorted_list = sorted(appended_list, key=lambda x: x.start_time)
+    #     first=sorted_list[0]
+    #     last=sorted_list[len(sorted_list)-1]
+    #     start_timee_2 = time.fromisoformat(start_time)
+    #     end_timee_2 = time.fromisoformat(end_time)
+    #     if start_timee_2 >=last.end_time:
+    #         already_cons=Constraint.objects.filter(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
+    #         if already_cons:
+    #             return False
+    #         else:
+    #             Constraint.objects.create(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
+    #             return True
+    #     elif end_timee_2<=first.start_time:
+    #         already_cons=Constraint.objects.filter(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
+    #         if already_cons:
+    #             return False
+    #         else:
+    #             Constraint.objects.create(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
+    #             return True
         
-        for constraint1, constraint2 in zip(sorted_list, sorted_list[1:]):   
+    #     for constraint1, constraint2 in zip(sorted_list, sorted_list[1:]):   
                 
-                if constraint1.end_time <= start_timee_2 <= constraint2.start_time and  constraint1.end_time <= end_timee_2 <= constraint2.start_time:
-                    already_cons=Constraint.objects.filter(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
-                    if already_cons:
-                        return False
-                    else:
-                        Constraint.objects.create(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
-                        return True
+    #             if constraint1.end_time <= start_timee_2 <= constraint2.start_time and  constraint1.end_time <= end_timee_2 <= constraint2.start_time:
+    #                 already_cons=Constraint.objects.filter(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
+    #                 if already_cons:
+    #                     return False
+    #                 else:
+    #                     Constraint.objects.create(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
+    #                     return True
     
-        return False
-    else:
-        if student:
-            student_list=list(student)
-            sorted_list = sorted(student_list, key=lambda x: x.start_time)
-            if len(student_list) == 1:
-                first=sorted_list[0]
-                if end_timee_2<=first.start_time or first.end_time <=start_timee_2:
-                    already_cons=Constraint.objects.filter(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
-                    if already_cons:
-                        return False
-                    else:
-                        Constraint.objects.create(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
-                        return True
-            else:
-                check_contt(request,name,day,start_time,end_time)
-        elif constraint_obj:
-            student_list=list(constraint_obj)
-            sorted_list = sorted(student_list, key=lambda x: x.start_time)
-            if len(student_list) == 1:
-                first=sorted_list[0]
-                if end_timee_2<=first.start_time or first.end_time <=start_timee_2:
-                    already_cons=Constraint.objects.filter(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
-                    if already_cons:
-                        return False
-                    else:
-                        Constraint.objects.create(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
-                        return True
-            else:
-                check_contt_two(request,name,day,start_time,end_time)
+    #     return False
+    # else:
+    #     if student:
+    #         student_list=list(student)
+    #         sorted_list = sorted(student_list, key=lambda x: x.start_time)
+    #         if len(student_list) == 1:
+    #             first=sorted_list[0]
+    #             if end_timee_2<=first.start_time or first.end_time <=start_timee_2:
+    #                 already_cons=Constraint.objects.filter(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
+    #                 if already_cons:
+    #                     return False
+    #                 else:
+    #                     Constraint.objects.create(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
+    #                     return True
+    #         else:
+    #             check_contt(request,name,day,start_time,end_time)
+    #     elif constraint_obj:
+    #         student_list=list(constraint_obj)
+    #         sorted_list = sorted(student_list, key=lambda x: x.start_time)
+    #         if len(student_list) == 1:
+    #             first=sorted_list[0]
+    #             if end_timee_2<=first.start_time or first.end_time <=start_timee_2:
+    #                 already_cons=Constraint.objects.filter(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
+    #                 if already_cons:
+    #                     return False
+    #                 else:
+    #                     Constraint.objects.create(user=request.user,name=name, day=day, start_time = start_time, end_time=end_time)
+    #                     return True
+    #         else:
+    #             check_contt_two(request,name,day,start_time,end_time)
 '''
     This function take four  argument  and check the 
     student taking course with already existing courses
@@ -393,7 +391,11 @@ def check_for_day(request,course_,check,dday):
 
                     if res == True:
                        
-                        Allstudent.objects.create(user=request.user, course=cours, title=check)
+                        alredy=Allstudent.objects.filter(user=request.user, course=cours, title=check)
+                        if alredy:
+                            pass
+                        else:
+                            Allstudent.objects.create(user=request.user, course=cours, title=check)
                         if dday == 1:
                             already_cons=Constraint.objects.filter(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
                         elif dday ==2:
@@ -416,8 +418,11 @@ def check_for_day(request,course_,check,dday):
                         continue
                         message1="constraint"
                 else:
-                   
-                    Allstudent.objects.create(user=request.user, course=cours, title=check)
+                    alredy=Allstudent.objects.filter(user=request.user, course=cours, title=check)
+                    if alredy:
+                        pass
+                    else:
+                        Allstudent.objects.create(user=request.user, course=cours, title=check)
 
                     if dday == 1:
                         already_cons=Constraint.objects.filter(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
@@ -455,7 +460,11 @@ def check_for_day(request,course_,check,dday):
                 
                                 res=check_already_constraint(request,cours,constraint_obj)
                                 if res == True:
-                                    Allstudent.objects.create(user=request.user, course=cours, title=check)
+                                    alredy=Allstudent.objects.filter(user=request.user, course=cours, title=check)
+                                    if alredy:
+                                        pass
+                                    else:
+                                        Allstudent.objects.create(user=request.user, course=cours, title=check)
                                     if dday == 1:
                                         already_cons=Constraint.objects.filter(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
                                     elif dday ==2:
@@ -481,7 +490,11 @@ def check_for_day(request,course_,check,dday):
                         if constraint_obj:
                             res=check_already_constraint(request,cours,constraint_obj)
                             if res == True:
-                                Allstudent.objects.create(user=request.user, course=cours, title=check)
+                                alredy=Allstudent.objects.filter(user=request.user, course=cours, title=check)
+                                if alredy:
+                                    pass
+                                else:
+                                    Allstudent.objects.create(user=request.user, course=cours, title=check)
                                 if dday == 1:
                                     already_cons=Constraint.objects.filter(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
                                 elif dday ==2:
@@ -518,7 +531,11 @@ def check_for_day(request,course_,check,dday):
             
                             res=check_already_constraint(request,cours,constraint_obj)
                             if res == True:
-                                Allstudent.objects.create(user=request.user, course=cours, title=check)
+                                alredy=Allstudent.objects.filter(user=request.user, course=cours, title=check)
+                                if alredy:
+                                    pass
+                                else:
+                                    Allstudent.objects.create(user=request.user, course=cours, title=check)
                                 if dday == 1:
                                     already_cons=Constraint.objects.filter(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
                                 elif dday ==2:
@@ -538,8 +555,12 @@ def check_for_day(request,course_,check,dday):
                                 message1="constraint"
                        
                         else:
-                            
-                            Allstudent.objects.create(user=request.user, course=cours, title=check)
+
+                            alredy=Allstudent.objects.filter(user=request.user, course=cours, title=check)
+                            if alredy:
+                                pass
+                            else:
+                                Allstudent.objects.create(user=request.user, course=cours, title=check)
                             if dday == 1:
                                 already_cons=Constraint.objects.filter(user=request.user,name=constraint_, day=days, start_time = start_time_, end_time=end_time_)
                             elif dday ==2:
@@ -656,7 +677,13 @@ def select_courses(request):
 
     else:  
         for check in checked_checkboxes_courses:  
+            # cours=Allcourse.objects.filter(name=check).last()
+            # check_courses_to_add(request,cours,check)
+
+        
+           
             already_ = Allstudent.objects.filter(user=request.user,title=check)
+            
             if already_:
                 continue
             else:
