@@ -21,3 +21,17 @@ cd timetable/pdf
 run the command:
 
 python manage.py runserver
+
+
+
+
+for adding course please hit that link:
+http://127.0.0.1:8000/adminn/
+username=admin@example.com 
+password =admin 
+ Please find words "Allcourse"
+ click on Allcourse 
+
+ at the left side click Add course here you can add your cources
+ you can see from the screen shot .screen shot inside the project
+ 
