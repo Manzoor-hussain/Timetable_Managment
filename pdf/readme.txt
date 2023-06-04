@@ -33,5 +33,8 @@ password =admin
  click on Allcourse 
 
  at the left side click Add course here you can add your cources
- you can see from the screen shot .screen shot inside the project
+ you can see from the screen shot .screen shotn and vido inside the project
+
+ we are using sqlit3 database which is default database for django project.
+ we added subject student etc in the sqlite database. 
  
