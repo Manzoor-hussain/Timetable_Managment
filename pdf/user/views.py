@@ -289,10 +289,13 @@ def check_for_day(request,course_,check,dday):
         timetable = Allcourse.objects.filter(allstudent__user=request.user,day=cours.day)
         days_2 = {"MON":"MONDAY", "TUE":'TUESDAY', "WED":"WEDNESDAY", "THU":'THURSDAY', "FRI":'FRIDAY',"SUN":'SUNDAY'}
         full_day=''
-       
+     
       
         if cours.day in days_2:
             full_day = days_2[cours.day]
+        
+          #make function to
+          
        
        
         if not timetable:
@@ -612,7 +615,7 @@ def select_courses(request):
                 '''
                 if not day:
                 
-                    course_= Allcourse.objects.filter(name=check)
+                    course_= Allcourse.objects.filter(name=check).exclude(studentcount=0)
                     if course_:
                         res=check_for_day(request,course_,check,0)
                         allstudent=Allstudent.objects.filter(user=request.user,title=check) 
@@ -631,9 +634,9 @@ def select_courses(request):
                     '''
                     below code execute when user select any constraint with courses
                     '''
-                    course_= Allcourse.objects.filter(name=check ,day=days_)
+                    course_= Allcourse.objects.filter(name=check ,day=days_).exclude(studentcount=0)
                     if not course_:
-                        course_= Allcourse.objects.filter(name=check).exclude(day=days_)
+                        course_= Allcourse.objects.filter(name=check).exclude(day=days_).exclude(studentcount=0)
                 
                     if course_.exists():
                     
@@ -650,13 +653,13 @@ def select_courses(request):
                             
                                 days_22=day_2.upper()
                                 days_2=days_22[:3]
-                                course_= Allcourse.objects.filter(name=check ,day=days_2).exclude(day=days_)
+                                course_= Allcourse.objects.filter(name=check ,day=days_2).exclude(day=days_).exclude(studentcount=0)
                                 start_timee_2 = time.fromisoformat(start_time_2)
                                 end_timee_2 = time.fromisoformat(end_time_2)       
                                 if course_:
                                     for cours in course_:
                                         if cours.start_time <= start_timee_2 <= cours.end_time or cours.start_time <= end_timee_2 <= cours.end_time:
-                                            course_= Allcourse.objects.filter(name=check).exclude(day=days_).exclude(day=days_2)
+                                            course_= Allcourse.objects.filter(name=check).exclude(day=days_).exclude(day=days_2).exclude(studentcount=0)
                                             if course_:
                                                 res =check_for_day(request,course_,check ,2)
                                             #     if res == False:
@@ -668,7 +671,7 @@ def select_courses(request):
                                                         
                                             
                                 else:
-                                    course_= Allcourse.objects.filter(name=check).exclude(day=days_).exclude(day=days_2)
+                                    course_= Allcourse.objects.filter(name=check).exclude(day=days_).exclude(day=days_2).exclude(studentcount=0)
         
                                     if course_:
                                         res =check_for_day(request,course_,check ,2)
@@ -682,7 +685,7 @@ def select_courses(request):
                             else:
                                 try:
                                         #first day and check another 
-                                    course_= Allcourse.objects.filter(name=check).exclude(day=days_)
+                                    course_= Allcourse.objects.filter(name=check).exclude(day=days_).exclude(studentcount=0)
                                     if course_:
                                         res =check_for_day(request,course_,check,1)
                                     #     if res == False:
@@ -697,7 +700,7 @@ def select_courses(request):
 
                         else:
                             try:
-                                course_= Allcourse.objects.filter(name=check).exclude(day=days_)
+                                course_= Allcourse.objects.filter(name=check).exclude(day=days_).exclude(studentcount=0)
                                 if course_:
                                     check_for_day(request,course_,check,1)              
                             except Exception as e:
