@@ -795,30 +795,30 @@ def show_timetable(request):
             first = False
         sorted_dict[k] = sorted(obj_list, key = lambda x:[str(x[y]['start_time']).replace(':','') for y in x])
     
-    for key, values in sorted_dict.items():
-        for item in values:
-            if 'object' in item:
-                start_time_str = item['object']['start_time']
-                end_time_str = item['object']['end_time']
-            else:
-                continue
-            start_time_object = datetime.strptime(start_time_str, '%H:%M:%S')
-            end_time_object = datetime.strptime(end_time_str, '%H:%M:%S')
-            hour = start_time_object.hour
-            minute = start_time_object.minute
+    # for key, values in sorted_dict.items():
+    #     for item in values:
+    #         if 'object' in item:
+    #             start_time_str = item['object']['start_time']
+    #             end_time_str = item['object']['end_time']
+    #         else:
+    #             continue
+    #         start_time_object = datetime.strptime(start_time_str, '%H:%M:%S')
+    #         end_time_object = datetime.strptime(end_time_str, '%H:%M:%S')
+    #         hour = start_time_object.hour
+    #         minute = start_time_object.minute
 
-            # Create a datetime.time object
-            start_time = time(hour, minute)
+    #         # Create a datetime.time object
+    #         start_time = time(hour, minute)
 
 
-            # Extract the hour and minute components
-            hour = end_time_object.hour
-            minute = end_time_object.minute
+    #         # Extract the hour and minute components
+    #         hour = end_time_object.hour
+    #         minute = end_time_object.minute
 
-            # Create a datetime.time object
-            end_time = time(hour, minute)
-            item['object']['start_time'] = start_time
-            item['object']['end_time'] = end_time
+    #         # Create a datetime.time object
+    #         end_time = time(hour, minute)
+    #         item['object']['start_time'] = start_time
+    #         item['object']['end_time'] = end_time
   
     return render(request, 'user/timetable.html',{'grouped_dict': g_d ,'data':sorted_dict})
  

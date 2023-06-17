@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 
-from .models import  Allcourse
+from .models import  Allcourse, Allstudent,Constraint
 
 admin.site.register(Allcourse)
 

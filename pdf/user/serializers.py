@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from superadmin.models import  Allcourse, Allstudent, Constraint
-from datetime import date,  timedelta,datetime
+from datetime import date,  timedelta, datetime, time
 import pdb
 
 '''
@@ -9,9 +9,16 @@ import pdb
 '''
 
 class UserSerializerForTimeTable(serializers.ModelSerializer):
+    start_time = serializers.SerializerMethodField()
+    end_time = serializers.SerializerMethodField()
     class Meta:
         model = Allcourse
         fields = '__all__'
+    def get_start_time(self, obj):
+        return time(obj.start_time.hour, obj.start_time.minute)
+
+    def get_end_time(self, obj):
+        return time(obj.end_time.hour, obj.end_time.minute)
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
@@ -24,7 +31,6 @@ class UserSerializerForTimeTable(serializers.ModelSerializer):
             ('WED', 'Wednesday'),
             ('THU', 'Thursday'),
             ('FRI', 'Friday'),
-            ('SAT', 'Saturday'),
             ('SUN', 'Sunday'),
         )
         day_value=instance.day

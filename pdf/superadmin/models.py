@@ -11,13 +11,13 @@ from django.contrib.auth.models import User
  '''
 class Allcourse(models.Model):
     DAYS_OF_WEEK = (
+        ('SUN', 'Sunday'),
         ('MON', 'Monday'),
         ('TUE', 'Tuesday'),
         ('WED', 'Wednesday'),
         ('THU', 'Thursday'),
         ('FRI', 'Friday'),
-        ('SAT', 'Saturday'),
-        ('SUN', 'Sunday'),
+       
     )
     day = models.CharField(max_length=3, choices=DAYS_OF_WEEK)
     user = models.ManyToManyField(User)
